@@ -26,11 +26,19 @@ jcurl:.j.k raze curl@
 fetch:{[url;p] log.info"fetch ",url;path[p]0:curl url}
 
 / json helpers
-jread:.j.k raze read0@
-jresolve1:{$[count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;a like"env:*";getenv`$4_a;a like".z.*";get a;()];ssr[x;y;tostr r];x]}
-jresolve:{$[count v:x ss"${";jresolve1/[x;{y[0]_(1+y 1)#x}[x]each v,'x ss"}"];x]}
-jexpand:{$[(t:type x)in 0 99h;.z.s each x;t=10;jresolve x;x]}each
-jparse:{[p] .conf,:1#e:1#.q;vars::e;if[`vars in key a:jread p;vars,:v:a`vars;{vars[y]:r:jresolve x y;.conf[y]:r}[v]each key v];jexpand a}
+readj:.j.k raze read0 path@
+resolvej1:{
+    env:`;
+    if[not count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;env:a like"env:*";getenv env:`$4_a;a like".z.*";get a;()];
+      if[not null env;'"Unresolved env variable ",string env];
+      x];
+    ssr[x;y;tostr r]}
+
+/resolvej1:{$[count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;a like"env:*";getenv`$4_a;a like".z.*";get a;()];ssr[x;y;tostr r];x]}
+
+resolvej:{$[count v:x ss"${";resolvej1/[x;{y[0]_(1+y 1)#x}[x]each v,'x ss"}"];x]}
+expandj:{$[(t:type x)in 0 99h;.z.s each x;t=10;resolvej x;x]}each
+parsej:{[p] .conf,:1#e:1#.q;vars::e;if[`vars in key a:readj p;vars,:v:a`vars;{vars[y]:r:resolvej x y;.conf[y]:r}[v]each key v];expandj a}
 
 loadf:{[p] system"l ",spath p;}
 loadcfg:{[module;dir]
@@ -53,17 +61,23 @@ env[`QI_OFFLINE;0b;"1"=first@]
 envpath:{path @[x;0;.env]}
 getindex:{[refresh] $[refresh|not exists p:path(.env.QI_HOME;`cache;`index.json);fetch[.env.QI_INDEX_URL;p];p]}
 
+try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
+try1:{try[x;enlist y;z]}
+
+addPkg:{[name;ismodule] $[ismodule;`.qi.PKGS;`.qi.PROCS]?name;}
+
 pmanage:{[ismodule;x]
-  if[(name:first` vs sx:tosym x)in PKGS;:()];
-  if[name in key`;:()];
+  if[(name:first` vs sx:tosym x)in PKGS;:(::)];
+  if[name in key`;:(::)];
   log.info $[ismodule;"Loading ";"Checking for "],string name;
   if[exists pv:envpath(`QI_VENDOR;f:dotq sx);
+    addPkg[name;ismodule];
     :loadf pv];
   if[exists pl:.env.QI_LOCK;
     dbg2];
   if[exists pc:.env.QI_CONFIG;
     dbg3];
-  m:jread[getindex 0b][`procs`modules ismodule]name;
+  m:readj[getindex 0b][`procs`modules ismodule]name;
   repo:$["/"in m`repo;m`repo;DEFAULT_OWNER,"/",m`repo];
 
   isTag:m[`ref]like"v[0-9]*";refresh:1b;
@@ -90,13 +104,13 @@ pmanage:{[ismodule;x]
       cf 0:enlist sha]];
 
   loadcfg[name;first` vs mp];
-  $[ismodule;`.qi.PKGS;`.qi.PROCS]?name;
+  addPkg[name;ismodule];
   if[ismodule;loadf mp];
   }
 
 loadstack:{[f]
-  procs:(r:.qi.jparse f)`processes;
-  if[count invalid:except[p:`$distinct get procs[;`proc]]vp:key .qi.jread[.qi.getindex 0b]`procs;
+  procs:(r:.qi.parsej f)`processes;
+  if[count invalid:except[p:`$distinct get procs[;`proc]]vp:key .qi.readj[.qi.getindex 0b]`procs;
     :log.error"Invalid process type: ",sv[",";string invalid],". Must be one of: ",","sv string vp];
   .qi.addproc each p;
   .conf,:1#.q;
@@ -155,9 +169,6 @@ fetchlib:fetch"lib"
 include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a in INCLUDED;if[not exists p:qilib a;fetchlib[p;a]];system"l ",spath p;INCLUDED,:a]}
 includecfg:{if[not exists p:qiconfig x;fetchcfg[p;x]]}
 now:{.z.p};today:{.z.d}
-
-try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
-try1:{try[x;enlist y;z]}
 
 \d .q
 {{$[b;last` vs x;x]set get$[b:"."=first s:.qi.tostr x;x;` sv`.qi,x]}each $[.qi.exists x;`$read0 x;()]}.qi.qiconfig`promote.txt;

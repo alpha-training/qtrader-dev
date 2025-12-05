@@ -1,8 +1,5 @@
 / Command & Control
 
-.qi.use`log
-.qi.use`ipc
-
 .ipc.init[];
 
 \d .c2

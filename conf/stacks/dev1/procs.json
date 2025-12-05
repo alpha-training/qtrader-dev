@@ -1,0 +1,65 @@
+{
+  "description": "US Equities DEV",
+  "base_port": 6000,
+  "vars": {
+    "qhome": "/opt/q",
+    "arch": "m64",
+    "qbin": "/opt/q/m64/q",
+    "data": "${env:QT_DATA_DEV1}",
+    "cpu_affinity": ""
+  },
+  "processes": {
+    "tp1": {
+      "proc": "tp",
+      "port_offset": 10,
+      "tables": "tp1.txt",
+      "args": [
+        "-t",
+        "10"
+      ]
+    },
+    "rdb": {
+      "proc": "rdb",
+      "port_offset": 11,
+      "subscribe": {
+        "ctp": []
+      }
+    },
+    "wdb": {
+      "proc": "wdb",
+      "port_offset": 12,
+      "dir" : "${data}/wdb",
+      "subscribe": {
+        "ctp": []
+      },
+      "args": [
+        "-write_every",
+        "00:30",
+        "-hdb",
+        "hdb"
+      ]
+    },
+    "tp2": {
+      "proc": "tp",
+      "port_offset": 21,
+      "tables": "tp2.txt",
+      "args": [
+        "-t",
+        "100"
+      ]
+    },
+    "ctp": {
+      "proc": "ctp",
+      "port_offset": 13,
+      "subscribe": {
+        "tp1": [],
+        "tp2": []
+      }
+    },
+    "hdb": {
+      "proc": "hdb",
+      "port_offset": 20,
+      "dir" : "${data}/hdb"
+    }
+  }
+}
