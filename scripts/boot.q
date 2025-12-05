@@ -4,3 +4,4 @@
 \l lib/conf.q
 
 .conf.loadstack`dev1
+.conf.loadself[];
