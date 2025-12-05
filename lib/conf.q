@@ -10,7 +10,7 @@ loadstack:{[stackname]
   .conf.procs:update`$proc,7h$port_offset,`$depends_on,7h$port from procs;
   update port:port_offset+.conf.c2_port from`.conf.procs where null port,not null port_offset;
   `.ipc.conns upsert select name,proc,port from .conf.procs;
-  if[not`name in key .qi.opts;:()];
+  if[not`name in key .qi.opts;:(::)];
   if[not(n:`$.qi.opts`name)in key v;'"Unrecognized process name: ",string n];
   self::.conf.procs[n],key[def]_v n;
  }

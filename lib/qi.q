@@ -15,6 +15,7 @@ path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}     /  returns `:pat
 spath:1_string path@    / returns "path/to/file"
 exists:not()~key@
 isfile:{p~key p:path x}
+files:{(raze/){$[p~k:key p:path x;p;.z.s each p,'k]}x}
 env:{[v;default;f] sv[`;`.env,v]set $[count r:getenv v;f r;default];}
 dotq:{$[x like"*.*";x;type[x]in -11 11h;` sv x,`q;x,".q"]}
 
