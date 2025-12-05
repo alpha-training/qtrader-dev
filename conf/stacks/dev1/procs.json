@@ -1,10 +1,10 @@
 {
   "description": "US Equities DEV",
-  "base_port": 6000,
   "vars": {
     "qhome": "/opt/q",
     "arch": "m64",
     "qbin": "/opt/q/m64/q",
+    "c2_port": "${env:QT_C2_PORT}",
     "data": "${env:QT_DATA_DEV1}",
     "cpu_affinity": ""
   },
