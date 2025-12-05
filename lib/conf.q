@@ -4,7 +4,6 @@ paths.conf:` sv .env.QT_HOME,`conf
 
 loadstack:{[stackname]
   r:.qi.parsej paths.conf,`stacks,stackname,`procs.json;
-  dbg;
   base::7h$r`base_port;
   def:`proc`cmd`port_offset`taskset`args`depends_on`port!(`;"";0N;"";();();0N);
   procs:([]name:key v)!key[def]#/:def,/:get v:r`processes;
