@@ -1,7 +1,8 @@
 / Based on Kx's https://github.com/KxSystems/kdb-tick
-
-if[not system"p";system"p 5010"]
-@[system;"l schema.q";"No Schema Found In Current Directory"]
+\e 1
+if[not system"p";system"p 2010"]
+/@[system;"l schema.q";"No Schema Found In Current Directory"]
+bar1s:flip .schema.c.Massive1s!"nsffffj"$\:()
 \d .u
 init:{w::t!(count t::tables`.)#()}
 del:{w[x]_:w[x;;0]?y};.z.pc:{del[;x]each t};
