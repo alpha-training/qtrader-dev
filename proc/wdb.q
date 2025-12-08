@@ -1,8 +1,8 @@
 / adapted from https://github.com/simongarland/tick/blob/master/w.q
 
 getTMPSAVE:{`$":../tmp.",(string .z.i),".",string x}  
-TMPSAVE:getTMPSAVE .z.d
-MAXROWS:100000
+TMPSAVE:getTMPSAVE (.z.d)
+MAXROWS:10000
 KEEPONEXIT:any`keeponexit`koe in key .Q.opt .z.x
 
 append:{[t;data]
@@ -24,8 +24,7 @@ disksort:{[t;c;a]
         @[t;first c;a]];t}
 
 / get the ticker plant and history ports, defaults are 5010,5012
-.u.x:.z.x,(count .z.x)_(":2010";":5012")
-
+.u.x:(":2010";":5012")
 .u.end:{ / end of day: save, clear, sort on disk, move, hdb reload
     t:tables`.;t@:where 11h=type each t@\:`sym;
     / append enumerated buffer to disk
