@@ -24,7 +24,7 @@ disksort:{[t;c;a]
         @[t;first c;a]];t}
 
 / get the ticker plant and history ports, defaults are 5010,5012
-.u.x:(":2010";":5012")
+.u.x:(":6010";":5013")
 .u.end:{ / end of day: save, clear, sort on disk, move, hdb reload
     t:tables`.;t@:where 11h=type each t@\:`sym;
     / append enumerated buffer to disk
