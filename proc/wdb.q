@@ -23,8 +23,7 @@ disksort:{[t;c;a]
                 {v:get y;if[not$[all(fv:first v)~/:256#v;all fv~/:v;0b];v[x]:v;y set v];}[ii]each` sv't,'get` sv t,`.d]];
         @[t;first c;a]];t}
 
-/ get the ticker plant and history ports, defaults are 5010,5012
-.u.x:(":6010";":5013")
+
 .u.end:{ / end of day: save, clear, sort on disk, move, hdb reload
     t:tables`.;t@:where 11h=type each t@\:`sym;
     / append enumerated buffer to disk
@@ -39,7 +38,7 @@ disksort:{[t;c;a]
     / reset TMPSAVE for new day
     TMPSAVE::getTMPSAVE .z.d;	
     / and notify hdb to reload and pick up new partition
-    if[h:@[hopen;`$":",.u.x 1;0];h"\\l .";hclose h];	
+    if[h:@[.ipc.conn;`hdb;0];h"\\l .";hclose h];	
     }
 
 .z.exit:{ / unexpected exit: clear, wipe TMPSAVE contents (doesn't rm the directory itself)
@@ -56,4 +55,4 @@ disksort:{[t;c;a]
 / HARDCODE \cd if other than logdir/db
 
 / connect to ticker plant for (schema;(logcount;log))
-.u.rep .(hopen `$":",.u.x 0)"(.u.sub[`;`];`.u `i`L)"
+.u.rep .(.ipc.conn`tp1)"(.u.sub[`;`];`.u `i`L)"
