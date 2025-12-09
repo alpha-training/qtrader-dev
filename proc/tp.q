@@ -1,6 +1,4 @@
 \e 1
-/if[not system"p";system"p 2010"]
-/@[system;"l schema.q";"No Schema Found In Current Directory"]
 bar1s:flip .schema.c.Massive1s!"psffffj"$\:()
 \d .u
 init:{w::t!(count t::tables`.)#()}
