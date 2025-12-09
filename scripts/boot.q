@@ -7,7 +7,7 @@
 .conf.loadstack`dev1
 
 startProcess:{
-    confProcs:.conf.procs[`$.qi.opts`name];
+    confProcs:.conf.procs`$.qi.opts`name;
     system"p ",string confProcs`port;
     system"l proc/",string[confProcs`proc],".q";
  }
