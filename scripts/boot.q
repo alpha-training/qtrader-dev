@@ -12,3 +12,7 @@ startProcess:{
     system"l proc/",string[confProcs`proc],".q";
  }
 startProcess[]
+
+
+/
+if[""~procName:.qi.opts`name;0N!"missing -name in command line argument!";exit 1];
