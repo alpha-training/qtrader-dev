@@ -1,6 +1,7 @@
 / adapted from https://github.com/simongarland/tick/blob/master/w.q
 
-getTMPSAVE:{`$":../tmp.",(string .z.i),".",string x}  
+path:getenv`QT_DATA_DEV1
+getTMPSAVE:{`$":",path,"/tmp.",(string .z.i),".",string x}  
 TMPSAVE:getTMPSAVE (.z.d)
 MAXROWS:10000
 KEEPONEXIT:any`keeponexit`koe in key .Q.opt .z.x

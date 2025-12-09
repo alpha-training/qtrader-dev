@@ -1,6 +1,8 @@
 \e 1
 bar1s:flip .schema.c.Massive1s!"psffffj"$\:()
+
 \d .u
+path:getenv`QT_DATA_DEV1
 init:{w::t!(count t::tables`.)#()}
 del:{w[x]_:w[x;;0]?y};.z.pc:{del[;x]each t};
 sel:{$[`~y;x;select from x where sym in y]}
@@ -10,7 +12,7 @@ sub:{if[x~`;:sub[;y]each t];if[not x in t;'x];del[x].z.w;add[x;y]}
 end:{(neg union/[w[;;0]])@\:(`.u.end;x)}
 
 ld:{if[not type key L::`$(-10_string L),string x;.[L;();:;()]];i::j::-11!(-2;L);if[0<=type i;-2 (string L)," is a corrupt log. Truncate to length ",(string last i)," and restart";exit 1];hopen L};
-tick:{init[];if[not min(`time`sym~2#key flip value@)each t;'`timesym];@[;`sym;`g#]each t;d::.z.D;;L::`$":logs/tp",10#".";l::ld d};
+tick:{init[];if[not min(`time`sym~2#key flip value@)each t;'`timesym];@[;`sym;`g#]each t;d::.z.D;;L::`$":",path,"/logs/tp",10#".";l::ld d};
 
 endofday:{end d;d+:1;if[l;hclose l;l::0(`.u.ld;d)]};
 ts:{if[d<x;if[d<x-1;system"t 0";'"more than one day?"];endofday[]]};
