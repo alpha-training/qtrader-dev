@@ -18,12 +18,12 @@ process:{
     sym:`$d 2;
     high:"f"$d 3;
     low:"f"$d 4;
-    open:"f"$d 5;    
+    open:"f"$d 5;
     close:"f"$d 6;
     vol:"j"$d 7;
     result:(time;sym;open;high;low;close;vol);
     neg[h](`.u.upd;tableName;result);
-    -1 "Processed ",(string count first result)," rows";
+    -1"Processed ",(string count first result)," rows";
     };
 
 .z.ts:{
