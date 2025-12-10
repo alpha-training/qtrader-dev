@@ -1,8 +1,6 @@
 # qtrader Order Lifecycle Walkthrough
 A complete, step-by-step example of how **two strategies** express intent, how netting aggregates their targets, how the OMS produces orders, how fills arrive, and how positions update.
 
-This document reflects your chosen schemas:
-
 ## **Intent**
 ```
 time,p
