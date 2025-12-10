@@ -14,3 +14,13 @@ loadstack:{[stackname]
   if[not(n:`$.qi.opts`name)in key v;'"Unrecognized process name: ",string n];
   self::((1#`name)!1#n),.conf.procs[n],key[def]_v n;
  }
+
+checkself:{
+  if[count d:self`depends_on;
+    if[count w:where null d!.ipc.conn each d;
+      .log.fatal"Could not connect to ",","sv string w]];
+ }
+
+pc:{if[count d:exec name from .ipc.conns where name in .conf.self.depends_on,null handle;.log.fatal"Lost connection to ",","sv string d]}
+
+.event.addHandler[`.z.pc;`.conf.pc];
