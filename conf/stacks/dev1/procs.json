@@ -9,13 +9,12 @@
     "cpu_affinity": ""
   },
   "processes": {
-    "tp1": {
+    "tp0": {
       "proc": "tp",
       "port_offset": 10,
-      "tables": "tp1.txt",
       "args": [
         "-t",
-        "10"
+        "100"
       ]
     },
     "rdb": {
@@ -39,27 +38,41 @@
         "hdb"
       ]
     },
-    "tp2": {
+    "tp1": {
       "proc": "tp",
       "port_offset": 21,
-      "tables": "tp2.txt",
       "args": [
         "-t",
-        "100"
+        "10"
       ]
     },
     "ctp": {
       "proc": "ctp",
       "port_offset": 13,
       "subscribe": {
-        "tp1": [],
-        "tp2": []
+        "tp0": [],
+        "tp1": []
       }
     },
     "hdb": {
       "proc": "hdb",
       "port_offset": 20,
       "dir" : "${data}/hdb"
+    },
+    "eng": {
+      "proc": "eng",
+      "port_offset": 30,
+      "depends_on" : ["tp0", "net"]
+    },
+    "net": {
+      "proc": "net",
+      "port_offset": 40,
+      "depends_on" : ["tp0", "om"]
+    },
+    "om": {
+      "proc": "om",
+      "port_offset": 50,
+      "depends_on" : ["tp0"]
     }
   }
 }

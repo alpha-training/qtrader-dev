@@ -37,6 +37,8 @@ printx:{[context;lvl;x]
 
 print:printx()!()
 {.log[x]:print x}each cfg.LEVELS;
+.log.quit:{.log.info x;exit 0}
+.log.fatal:{.log.error x;exit 1}
 
 with:{[context] (1#.q),k!{printx[x;y]}[context]each k:cfg.LEVELS}
 

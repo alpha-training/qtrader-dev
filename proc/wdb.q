@@ -1,6 +1,6 @@
 / adapted from https://github.com/simongarland/tick/blob/master/w.q
 
-path:getenv`QT_DATA_DEV1
+path:.conf.stack.vars.data
 getTMPSAVE:{`$":",path,"/tmp.",(string .z.i),".",string x}  
 TMPSAVE:getTMPSAVE (.z.d)
 MAXROWS:10000
