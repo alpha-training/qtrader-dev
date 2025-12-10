@@ -13,4 +13,4 @@ intent:{[x]
   pubsert[`Req]req:select time,sym,size:aggpos-0^pos,urgency,note from agg;
   if[count req:select from req where size<>0;
     .ipc.conn[`om](`req;req)];
-}
+ }
