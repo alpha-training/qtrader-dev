@@ -12,7 +12,6 @@
     "tp1": {
       "proc": "tp",
       "port_offset": 10,
-      "tables": "tp1.txt",
       "args": [
         "-t",
         "10"
@@ -42,7 +41,6 @@
     "tp2": {
       "proc": "tp",
       "port_offset": 21,
-      "tables": "tp2.txt",
       "args": [
         "-t",
         "100"
