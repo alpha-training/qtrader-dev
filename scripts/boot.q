@@ -1,9 +1,11 @@
 \l lib/qi.q
+\l lib/ts.q
 \l lib/os.q
 \l lib/common.q
 \l lib/env.q
 \l lib/conf.q
 \l lib/schema.q
+\l lib/pubsub.q
 
 .conf.loadstack`dev1
 
