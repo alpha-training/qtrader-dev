@@ -1,9 +1,5 @@
 / Command & Control Client
 
-.qi.use`log
-.qi.use`ipc
-.qi.use`cron
-
 \d .c3
 
 C2HOSTPORT:0N
