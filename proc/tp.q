@@ -2,7 +2,7 @@
 bar1s:flip .schema.c.Massive1s!"psffffj"$\:()
 
 \d .u
-path:hsym `$.conf.stack.vars.data
+path:.conf.stack.vars.data
 init:{w::t!(count t::tables`.)#()}
 del:{w[x]_:w[x;;0]?y};.z.pc:{del[;x]each t};
 sel:{$[`~y;x;select from x where sym in y]}

@@ -1,6 +1,6 @@
 / adapted from https://github.com/simongarland/tick/blob/master/w.q
 
-path:hsym `$.conf.stack.vars.data
+path:.conf.stack.vars.data
 getTMPSAVE:{`$":",path,"/tmp.",(string .z.i),".",string x}  
 TMPSAVE:getTMPSAVE (.z.d)
 MAXROWS:10000
