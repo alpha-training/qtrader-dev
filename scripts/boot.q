@@ -7,7 +7,8 @@
 \l lib/schema.q
 \l lib/pubsub.q
 
-.conf.loadstack`dev1
+.qi.env[`STACK;`dev1;`$]
+.conf.loadstack .env.STACK^`$.qi.opts`stack
 if[.conf.self.proc<>`c2;system"l lib/c3.q"]
 
 startProcess:{
