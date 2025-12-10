@@ -28,5 +28,10 @@ if[not system"t";system"t 1000";
  if[not -12=type first first x;a:"p"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
  f:key flip value t;pub[t;$[0>type first x;enlist f!x;flip f!x]];if[l;l enlist (`upd;t;x);i+:1];}];
 
+heartbeat:{
+    pname:first`$.Q.opt[.z.x]`name;
+    info:(`pid`used`heap)!(.z.i;.Q.w[]`used;.Q.w[]`heap);
+    neg[first exec handle from .ipc.conns where name=pname](`.c2.heartbeat;pname;info)
+ }
 \d .
 .u.tick[]
