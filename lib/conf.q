@@ -12,5 +12,5 @@ loadstack:{[stackname]
   `.ipc.conns upsert select name,proc,port from .conf.procs;
   if[not`name in key .qi.opts;:(::)];
   if[not(n:`$.qi.opts`name)in key v;'"Unrecognized process name: ",string n];
-  self::.conf.procs[n],key[def]_v n;
+  self::((1#`name)!1#n),.conf.procs[n],key[def]_v n;
  }

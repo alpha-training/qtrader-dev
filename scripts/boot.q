@@ -8,6 +8,7 @@
 \l lib/pubsub.q
 
 .conf.loadstack`dev1
+if[.conf.self.proc<>`c2;system"l lib/c3.q"]
 
 startProcess:{
     confProcs:.conf.procs`$.qi.opts`name;
