@@ -1,4 +1,4 @@
-/ Command & Control Client
+/ Command & control client
 
 \d .c3
 
