@@ -56,6 +56,71 @@ app.get("/query", async (req, res) => {
   }
 });
 
+app.get("/state", async (req, res) => {
+  try {
+    const result = await kdbQuery(".c2.procs"); //c2 state of procceses table
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to get state" });
+  }
+});
+
+app.post("/start/:name", async (req, res) => {
+  const pname = req.params.name; // Get the process name from the URL eg:  "start/tp1" and start single process
+  try {
+    await kdbQuery(`start[${pname}]`);
+    res.json({ status: "started", process: pname });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: `Failed to start process ${pname}` });
+  }
+});
+
+app.post("/start-all", async (req, res) => {
+  try {
+    await kdbQuery("startall[]"); // start all proccesses
+    res.json({ status: "started all processes" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to start all processes" });
+  }
+});
+
+app.post("/stop/:name", async (req, res) => {
+  const pname = req.params.name; // e.g., "tp1"
+  try {
+    await kdbQuery(`stop[${pname}]`);
+    res.json({ status: "stopped", process: pname });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: `Failed to stop process ${pname}` });
+  }
+});
+
+app.post("/stopall", async (req, res) => {
+  try {
+    await kdbQuery("stopall[]");
+    res.json({ status: "stopped all processes" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to stop all processes" });
+  }
+});
+
+app.get("/logs/:name", async (req, res) => {
+  const pname = req.params.name; // e.g., "tp1"
+  try {
+    // Call the kdb+ tail function for this process
+    const result = await kdbQuery(`tail["${pname}"]`);
+    res.json({ process: pname, tail: result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: `Failed to read logs for process ${pname}` });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}`);
 });
