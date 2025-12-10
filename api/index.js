@@ -90,7 +90,7 @@ app.post("/start-all", async (req, res) => {
 app.post("/stop/:name", async (req, res) => {
   const pname = req.params.name; // e.g., "tp1"
   try {
-    await kdbQuery(`stop[${pname}]`);
+    await kdbQuery(`pkill[${pname}]`);
     res.json({ status: "stopped", process: pname });
   } catch (err) {
     console.error(err);
@@ -100,7 +100,7 @@ app.post("/stop/:name", async (req, res) => {
 
 app.post("/stopall", async (req, res) => {
   try {
-    await kdbQuery("stopall[]");
+    await kdbQuery("pkillall[]");
     res.json({ status: "stopped all processes" });
   } catch (err) {
     console.error(err);
