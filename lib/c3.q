@@ -12,10 +12,7 @@ PNAME:`
 
 pc:{[h] if[h=C2HANDLE;C2HANDLE::0Ni]}
 
-down:{[senderinfo]
-  .log.info(".c3.down called - existing.";senderinfo);
-  exit 0;
-  }
+down:{[senderinfo] .log.quit(".c3.down called";senderinfo)}
 
 heartbeat:{if[not null h:C2HANDLE;neg[h](`.c2.heartbeat;PNAME;select used, heapfrom .Q.w`)]}
 
