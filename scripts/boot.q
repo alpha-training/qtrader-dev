@@ -3,14 +3,9 @@
 \l lib/common.q
 \l lib/env.q
 \l lib/conf.q
+\l lib/os.q
 \l lib/schema.q
 \l lib/pubsub.q
-
-.qi.env[`STACK;`dev1;`$]
-.conf.loadstack .env.STACK^`$.qi.opts`stack
-.conf.checkself[]
-\l lib/os.q
-\l lib/c3.q
 
 if[.conf.self.proc<>`c2;system"l lib/c3.q"]
 
