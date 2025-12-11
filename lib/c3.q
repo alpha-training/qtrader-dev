@@ -17,7 +17,7 @@ heartbeat:{
 
 c2reconnect:{
   if[null C2HANDLE;
-    if[not not null port:.conf.c2_port;
+    if[not null port:.conf.c2_port;
       if[not null h:@[hopen;port;0Ni];
         .log.info"Reconnected to c2";
         C2HANDLE::h]]];
