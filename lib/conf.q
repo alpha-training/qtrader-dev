@@ -25,3 +25,7 @@ checkself:{
 pc:{if[count d:exec name from .ipc.conns where name in .conf.self.depends_on,null handle;.log.fatal"Lost connection to ",","sv string d]}
 
 .event.addHandler[`.z.pc;`.conf.pc];
+.qi.env[`STACK;`dev1;`$]
+.qi.env[`QTIMER;"100";::]
+.conf.loadstack .env.STACK^`$.qi.opts`stack
+.conf.checkself[];
