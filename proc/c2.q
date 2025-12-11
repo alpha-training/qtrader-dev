@@ -1,5 +1,5 @@
 \d .c2
-TAIL_ROWS:10;
+tailrows: "I"$.conf.stack.vars[`TAIL_ROWS]
 procs:update pid:0Ni,status:`down,used:0N,heap:0N,logfile:` from delete error from .ipc.conns;
 notfound:{[pname] string[pname]," process not found"}
 entry:{[pname] $[null(e::procs pname)`proc;();e]}
@@ -29,7 +29,7 @@ downall:{down each exec name except`c2 from procs where status~`up}
 tail:{[pname]
   file:first exec logfile from procs where name=pname;
   if[not .qi.isfile` sv(`:logs/proclogs;file);0N!"error! logfile doe not exist";:()];
-  .os.tail[file;TAIL_ROWS]
+  .os.tail[file;tailrows]
   }
 
 heartbeat:{[pname;info]
@@ -53,7 +53,6 @@ c3.init:{[pname;hostport]
 checkprocess:{update handle:0N,pid:0N,status:`down from `.c2.procs where handle=x}
 busyp:{update status:`busy from `.c2.procs where lastHeartbeat<.z.p-00:00:07}
 .event.addHandler[`.z.pc;`.c2.checkprocess]
-
 \d .
 
 
