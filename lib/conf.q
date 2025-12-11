@@ -1,9 +1,10 @@
 \d .conf
 
-paths.conf:` sv .env.QT_HOME,`conf
+.paths.conf:` sv .env.QT_HOME,`conf
 
 loadstack:{[stackname]
-  stack::r:.qi.parsej paths.conf,`stacks,stackname,`procs.json;
+  .paths.stack:` sv .paths.conf,`stacks,stackname;
+  stack::r:((1#`name)!1#stackname),.qi.parsej .paths.stack,`procs.json;
   c2_port::"J"$r[`vars]`c2_port;
   def:`proc`port_offset`taskset`args`depends_on`port!(`;0N;"";();();0N);
   procs:([]name:key v)!key[def]#/:def,/:get v:r`processes;

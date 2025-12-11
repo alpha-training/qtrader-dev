@@ -1,5 +1,5 @@
 \l lib/qi.q
-\l lib/ts.q
+\l lib/tm.q
 \l lib/common.q
 \l lib/env.q
 \l lib/conf.q

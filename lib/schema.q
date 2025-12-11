@@ -9,4 +9,4 @@ load1Schema:{[p]
   c[tab]:a 0;
   }
 
-load1Schema each .qi.files .conf.paths.conf,`schemas;
+load1Schema each .qi.files .paths.conf,`schemas;
