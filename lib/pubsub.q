@@ -1,2 +1,2 @@
 pub:{[t;x] .ipc.async[.env.SYSTEM_TP](`.u.upd;t;get flip x);}
-pubsert:{[t;x] upsert[t;x];pub[t;x]}
+pubsert:{[t;x] upsert[t;x];if[-12<>type first first a:$[98=type x;x;0!x];a:.schema.c[t]#a];pub[t;a]}
