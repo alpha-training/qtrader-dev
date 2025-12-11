@@ -6,7 +6,8 @@ C2HANDLE:0Ni
 
 pc:{[h] if[h=C2HANDLE;C2HANDLE::0Ni]}
 
-down:{[senderinfo] .log.quit(".c3.down called";senderinfo)}
+/ down:{[senderinfo] .log.quit(".c3.down called";senderinfo)}
+down:{[senderinfo] .log.quit ".c3.down called by: ", .j.j senderinfo;}
 
 /heartbeat:{if[not null h:C2HANDLE;neg[h](`.c2.heartbeat;.conf.self.name;`pid`used`heap!(.z.i;.Q.w[]`used;.Q.w[]`heap))]}
 heartbeat:{
