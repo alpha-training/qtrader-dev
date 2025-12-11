@@ -1,6 +1,5 @@
 \l lib/qi.q
 \l lib/ts.q
-\l lib/os.q
 \l lib/common.q
 \l lib/env.q
 \l lib/conf.q
@@ -10,6 +9,7 @@
 .qi.env[`STACK;`dev1;`$]
 .conf.loadstack .env.STACK^`$.qi.opts`stack
 .conf.checkself[]
+\l lib/os.q
 
 if[.conf.self.proc<>`c2;system"l lib/c3.q"]
 
