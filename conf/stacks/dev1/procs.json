@@ -59,7 +59,7 @@
       "port_offset": 20,
       "dir" : "${data}/hdb"
     },
-    "eng": {
+    "eng1": {
       "proc": "eng",
       "port_offset": 30,
       "depends_on" : ["tp0", "net"]
@@ -72,6 +72,11 @@
     "om": {
       "proc": "om",
       "port_offset": 50,
+      "depends_on" : ["tp0", "devbroker"]
+    },
+    "devbroker": {
+      "proc": "devbroker",
+      "port_offset": 51,
       "depends_on" : ["tp0"]
     },
     "c2": {
