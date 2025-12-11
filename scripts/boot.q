@@ -10,6 +10,7 @@
 .conf.loadstack .env.STACK^`$.qi.opts`stack
 .conf.checkself[]
 \l lib/os.q
+\l lib/c3.q
 
 if[.conf.self.proc<>`c2;system"l lib/c3.q"]
 
@@ -18,8 +19,8 @@ startProcess:{
     system"p ",string confProcs`port;
     system"l proc/",string[confProcs`proc],".q";
  }
+if[not system"t";system"t 1000"]
+
 startProcess[]
-
-
 /
 if[""~procName:.qi.opts`name;0N!"missing -name in command line argument!";exit 1];

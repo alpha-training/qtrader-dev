@@ -1,21 +1,21 @@
 / Command & Control
+/
 \l lib/qi.q
-\l lib/os.q
 \l lib/common.q
 \l lib/env.q
 \l lib/conf.q
 \l lib/schema.q
-
 .conf.loadstack`dev1
-
-W:.z.o like"w*"     / true for windows
+\l lib/os.q
+\l lib/c3.q
+\
 /.ipc.init[];
 
 \d .c2
 
 TAIL_ROWS:10
 
-procs:update pid:0Ni,status:`down,used:0N,heap:0N,logfile:` from .ipc.conns
+procs:update pid:0Ni,status:`down,used:0N,heap:0N,logfile:` from delete error from .ipc.conns
 
 notfound:{[pname] string[pname]," process not found"}
 entry:{[pname] $[null(e:procs pname)`proc;();e]}
@@ -24,9 +24,9 @@ heartbeat:{[pname;info]
   if[not pname in exec name from .conf.procs;:.log.warn".c2.heartbeat - unrecognized process name: ",string pname];
   update 
     handle:.z.w,
-    pid:.z.i,
-    used:.Q.w[]`used,
-    heap:.Q.w[]`heap,
+    pid:info`pid,
+    used:info`used,
+    heap:info`heap,
     status:`up,
     lastHeartbeat:.z.p
   from`.c2.procs where name=pname;
@@ -66,11 +66,12 @@ c3.init:{[pname;hostport]
   .c3.init[pname;hostport];
   }
 
-
 start:{[pname]
+  p:first exec port from procs where name=pname;
   .os.startproc["scripts/boot.q -name ",string[pname]," -p ",string p;.conf.stack.vars.data,"/",string[pname],".log"];
-  update status:`up,logfile:(`$string[pname],".log")from `procs where name=pname;
+  .c2.procs[pname;`status`logfile]:(`up;`$string[pname],".log")
  }
+
 
 startall:{start each exec name from .conf.procs}
 
@@ -79,14 +80,18 @@ pkill:{[pname]
   update status:`down from procs where name=pname;
  }
 
-pkillall:{pkill each exec name from .ipc.conns}
+pkillall:{pkill each exec name except `c2 from procs where not pid=0N}
 
 tail:{[pname]
-  system"tail -n ",string[TAIL_ROWS]," ",string[first exec logfile from procs where name=pname]
+  file:first exec logfile from procs where name=pname;
+  if[not .qi.isfile` sv(`:logs/proclogs;file);0N!"error! logfile doe not exist";:()];
+  .os.tail[file;TAIL_ROWS]
   }
-\d .
+/checkprocess:{update handle:0i,pid:0i,status:`down from `.c2.procs where handle=x}
+busyp:{update status:`busy from `.c2.procs where lastHeartbeat<.z.p-00:00:07}
+.event.addHandler[`.z.pc;{update handle:0i,pid:0i,status:`down from `.c2.procs where handle=x}]
 
-start:{[pname] .os.startproc["scripts\\boot.q -name ",string[pname]," -p ",string p;.conf.stack.vars.data,"/",string[pname],".log"]}
+\d .
 /
 start:{[fileargs;pname]
     p:first exec port from .conf.procs where name=pname;
