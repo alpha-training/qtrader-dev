@@ -15,7 +15,7 @@ conn:sync:{[name]
 async:{[name] $[null h:sync name;h;neg h]}
 
 tryConnect:{[port] 1_.qi.try1[hopen;("::",.qi.tostr port;TIMEOUT);0Ni]}
-pc:{[h] update handle:0Ni,error:{""}each i from`.ipc.conns where handle=x}
+pc:{[h] update handle:0Ni from`.ipc.conns where handle=x}
 
 \d .
 
