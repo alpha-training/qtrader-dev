@@ -1,6 +1,7 @@
 \d .c2
-tailrows: "I"$.conf.stack.vars[`TAIL_ROWS]
-procs:update pid:0Ni,status:`down,used:0N,heap:0N,logfile:` from delete error from .ipc.conns;
+
+tailrows:"J"$.conf.stack.vars`TAIL_ROWS
+procs:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,logfile:`,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
 notfound:{[pname] string[pname]," process not found"}
 entry:{[pname] $[null(e::procs pname)`proc;();e]}
 
@@ -40,19 +41,19 @@ heartbeat:{[pname;info]
     used:info`used,
     heap:info`heap,
     status:`up,
-    lastHeartbeat:.z.p
+    lastheartbeat:.z.p
   from`.c2.procs where name=pname;
  }
 
-c3.init:{[pname;hostport]
-  if[`c3 in key`;:()];
-  .qi.use`c3;
-  .c3.init[pname;hostport];
-  }
+pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from `.c2.procs where handle=h}
 
-checkprocess:{update handle:0N,pid:0N,status:`down from `.c2.procs where handle=x}
-busyp:{update status:`busy from `.c2.procs where lastHeartbeat<.z.p-00:00:07}
-.event.addHandler[`.z.pc;`.c2.checkprocess]
+check:{
+  update status:`busy from `.c2.procs where handle>0,lastheartbeat<.z.p-.conf.me.BUSY_PERIOD;
+ }
+
+.event.addHandler[`.z.pc;`.c2.pc]
+.cron.add[`.c2.check;0Np;00:00:01]
+
 \d .
 
 

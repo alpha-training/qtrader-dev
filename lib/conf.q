@@ -13,13 +13,18 @@ loadstack:{[stackname]
   `.ipc.conns upsert select name,proc,port from .conf.procs;
   if[not`name in key .qi.opts;:(::)];
   if[not(n:`$.qi.opts`name)in key v;'"Unrecognized process name: ",string n];
+  .conf.name:n;
   self::((1#`name)!1#n),.conf.procs[n],key[def]_v n;
  }
 
-checkself:{
+initself:{
   if[count d:self`depends_on;
     if[count w:where null d!.ipc.conn each d;
       .log.fatal"Could not connect to ",","sv string w]];
+  .conf.me:1#.q;
+  if[.qi.exists p:.qi.path .paths.conf,`proc,` sv .conf.self.proc,`csv;
+    a:("S*C";",")0:p;
+    .conf.me,:a[0]!upper[a 2]$a 1];
  }
 
 pc:{if[count d:exec name from .ipc.conns where name in .conf.self.depends_on,null handle;.log.fatal"Lost connection to ",","sv string d]}
@@ -28,4 +33,4 @@ pc:{if[count d:exec name from .ipc.conns where name in .conf.self.depends_on,nul
 .qi.env[`STACK;`dev1;`$]
 .qi.env[`QTIMER;"100";::]
 .conf.loadstack .env.STACK^`$.qi.opts`stack
-.conf.checkself[];
+.conf.initself[];
