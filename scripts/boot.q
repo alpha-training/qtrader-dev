@@ -14,7 +14,8 @@ startProcess:{
     system"p ",string confProcs`port;
     system"l proc/",string[confProcs`proc],".q";
  }
-if[not system"t";system"t 1000"]
+
+if[not system"t";system"t ",.env.QTIMER]
 
 startProcess[]
 /
