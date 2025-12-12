@@ -6,6 +6,7 @@
     "qbin": "/opt/q/m64/q",
     "c2_port": "${env:QT_C2_PORT}",
     "data": "${env:QT_DATA_DEV1}",
+    "strats": "${env:QT_STRATS}",
     "cpu_affinity": ""
   },
   "processes": {
@@ -62,6 +63,16 @@
     "eng1": {
       "proc": "eng",
       "port_offset": 30,
+      "depends_on" : ["tp0", "net"]
+    },
+    "peng": {
+      "proc": "peng",
+      "port_offset": 35,
+      "strats" : ["peter_strat1"],
+      "subscribe" : {
+        "tp0": "dynamic",
+        "tp1": "all"
+      },
       "depends_on" : ["tp0", "net"]
     },
     "net": {

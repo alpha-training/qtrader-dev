@@ -1,0 +1,12 @@
+{
+  "eng_peter1": {
+    "proc": "peng",
+    "port_offset": 31,
+    "strats": ["peter_strat1"],
+    "subscribe": {
+      "tp1": "dynamic",
+      "tp2": "all"
+    },
+    "description": "Personalised eng process for Peter"
+  }
+}
