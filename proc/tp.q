@@ -1,5 +1,5 @@
 {
- if[not .qi.exists p:.qi.path(.paths.stack;`proc;`tp0;`schema.txt);
+ if[not .qi.exists p:.qi.path(.paths.stack;`proc;.conf.name;`schema.txt);
     .log.fatal"No schema file found: ",1_string p];
  if[count[t]>count vt:inter[key .schema.t;t:`$read0 p];
     .log.fatal"No schema found for: ",","sv string t except vt];
