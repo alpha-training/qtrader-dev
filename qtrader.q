@@ -1,5 +1,5 @@
 / qtrader entry file
-/ q qt.q -name [process name]
+/ q qtrader.q -name [process name]
 
 \l lib/common.q
 
