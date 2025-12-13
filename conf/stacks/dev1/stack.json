@@ -1,14 +1,5 @@
 {
   "description": "US Equities DEV",
-  "vars": {
-    "qhome": "/opt/q",
-    "arch": "m64",
-    "qbin": "/opt/q/m64/q",
-    "c2_port": "${env:QT_C2_PORT}",
-    "data": "${env:QT_DATA_DEV1}",
-    "strats": "${env:QT_STRATS}",
-    "cpu_affinity": ""
-  },
   "processes": {
     "tp0": {
       "proc": "tp",
@@ -28,7 +19,7 @@
     "wdb": {
       "proc": "wdb",
       "port_offset": 12,
-      "dir" : "${data}/wdb",
+      "dir" : "$data/wdb",
       "subscribe": {
         "ctp": []
       },
@@ -58,7 +49,7 @@
     "hdb": {
       "proc": "hdb",
       "port_offset": 20,
-      "dir" : "${data}/hdb"
+      "dir" : "$data/hdb"
     },
     "eng1": {
       "proc": "eng",

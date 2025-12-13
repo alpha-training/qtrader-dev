@@ -1,54 +1,49 @@
 \d .c2
 
-tailrows:"J"$.conf.stack.vars`TAIL_ROWS
-procs:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,logfile:`,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
+conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,logfile:`,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
 notfound:{[pname] string[pname]," process not found"}
-entry:{[pname] $[null(e::procs pname)`proc;();e]}
+entry:{[pname] $[null(e::conns pname)`proc;();e]}
 
 start:{[pname]
-  p:first exec port from procs where name=pname;
+  p:first exec port from conns where name=pname;
   .os.startproc["scripts/boot.q -name ",string[pname]," -p ",string p;.conf.stack.vars.data,"/",string[pname],".log"];
-  .c2.procs[pname;`status`logfile]:(`up;`$string[pname],".log")
+  .c2.conns[pname;`status`logfile]:(`up;`$string[pname],".log")
  }
-startall:{start each exec name from .conf.procs}
+
+startall:{start each exec name from .c2.conns}
 
 kill:{[pname]
-  .os.kill[first exec pid from procs where name=pname];
-  update status:`down from procs where name=pname;
+  .os.kill[first exec pid from conns where name=pname];
+  update status:`down from conns where name=pname;
  }
-killall:{kill each exec name except `c2 from procs where status~`up}
+
+killall:{kill each exec name except `c2 from conns where status~`up}
 
 down:{[pname]
- if[()~e:procs pname;:".c2.down: ",string[pname]," not found"];sname:string pname;
+ if[()~e:conns pname;:".c2.down: ",string[pname]," not found"];sname:string pname;
  if[null h:e`handle;:".c2.down ",sname," handle is null"];
  if[not first r:.qi.try[{neg[x]y};(h;(`.c3.down;`host`port`args!(.z.h;system"p";" "sv .z.x)));::];
  .log.error".c2.down ",sname," ",r 2];
- .c2.procs[pname;`used`heap`pid]:(0N;0N;0N)
+ .c2.conns[pname;`used`heap`pid]:(0N;0N;0N)
  }
-downall:{down each exec name except`c2 from procs where status~`up}
+downall:{down each exec name except`c2 from conns where status~`up}
 
 tail:{[pname]
-  file:first exec logfile from procs where name=pname;
+  file:first exec logfile from conns where name=pname;
   if[not .qi.isfile` sv(`:logs/proclogs;file);0N!"error! logfile doe not exist";:()];
-  .os.tail[file;tailrows]
+  .os.tail[file;.conf.tailrows]
   }
 
 heartbeat:{[pname;info]
-  if[not pname in exec name from .conf.procs;:.log.warn".c2.heartbeat - unrecognized process name: ",string pname];
-  update 
-    handle:.z.w,
-    pid:info`pid,
-    used:info`used,
-    heap:info`heap,
-    status:`up,
-    lastheartbeat:.z.p
-  from`.c2.procs where name=pname;
+  if[not pname in exec name from .c2.conns;:.log.warn".c2.heartbeat - unrecognized process name: ",string pname];
+  update handle:.z.w,pid:info`pid,used:info`used,heap:info`heap,status:`up,lastheartbeat:.z.p
+  from`.c2.conns where name=pname;
  }
 
-pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from `.c2.procs where handle=h}
+pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from `.c2.conns where handle=h}
 
 check:{
-  update status:`busy from `.c2.procs where handle>0,lastheartbeat<.z.p-.conf.me.BUSY_PERIOD;
+  update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
  }
 
 .event.addHandler[`.z.pc;`.c2.pc]

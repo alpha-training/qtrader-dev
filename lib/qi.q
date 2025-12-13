@@ -13,70 +13,54 @@ tostr:{$[0=count x;"";0=t:type x;.z.s each x;t in -10 10h;x;string x]}
 tosym:{$[0=count x;`$();0=t:type x;.z.s each x;t in -11 11h;x;`$tostr x]}
 path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}     /  returns `:path/to/file
 spath:1_string path@    / returns "path/to/file"
-exists:not()~key@
+exists:{not()~key path x}
 isfile:{p~key p:path x}
 files:{(raze/){$[p~k:key p:path x;p;.z.s each p,'k]}x}
-env:{[v;default;f] sv[`;`.env,v]set $[count r:getenv v;f r;default];}
-dotq:{$[x like"*.*";x;type[x]in -11 11h;` sv x,`q;x,".q"]}
+fenv:{[v;default;f] sv[`;`env,v]set $[count r:getenv v;f r;default];}
+envpath:{path @[x;0;env]}
+dotq:{$[x like"*.*";x;`$tostr[x],".q"]}
+opts:first each .Q.opt .z.x
 
 log.print:{[typ;x] $[type x;-1;-1" "sv]"qi ",typ," ",string[.z.p]," ",x}
 log.info:log.print"info";log.warn:log.print"warn";log.error:log.print"error"
-.qi.system:{log.info"system ",x;system x}
+
+/ web & json
 curl:system("curl -fsSL ",$[count TOKEN;"-H \"Authorization: Bearer ",TOKEN,"\" ";""]),
 jcurl:.j.k raze curl@
 fetch:{[url;p] log.info"fetch ",url;path[p]0:curl url}
-
-/ json helpers
 readj:.j.k raze read0 path@
-resolvej1:{
-    env:`;
-    if[not count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;env:a like"env:*";getenv env:`$4_a;a like".z.*";get a;()];
-      if[not null env;'"Unresolved env variable ",string env];
-      x];
-    ssr[x;y;tostr r]}
 
-/resolvej1:{$[count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;a like"env:*";getenv`$4_a;a like".z.*";get a;()];ssr[x;y;tostr r];x]}
+/ file system
+loadf:{[p] system"l ",spath dotq p;}
+loadmodule:{[p;name]
+  system"l ",spath p,dotq name;
+  if[count initf:@[get;` sv`,name,`init;()];initf p];
+  }
 
-resolvej:{$[count v:x ss"${";resolvej1/[x;{y[0]_(1+y 1)#x}[x]each v,'x ss"}"];x]}
-expandj:{$[(t:type x)in 0 99h;.z.s each x;t=10;resolvej x;x]}each
-parsej:{[p] .conf,:1#e:1#.q;vars::e;if[`vars in key a:readj p;vars,:v:a`vars;{vars[y]:r:resolvej x y;.conf[y]:r}[v]each key v];expandj a}
+fenv[`QI_INDEX_URL;RAW,DEFAULT_OWNER,"/qi/main/index.json";::]
+fenv[`QI_HOME;hsym`$getenv[`HOME],"/.qi";path]
+fenv[`QI_VENDOR;`:vendor/qi;path]
+fenv[`QI_LOCK;`:qi.lock;path]
+fenv[`QI_CONFIG;`:qi.json;path]
+fenv[`QI_OFFLINE;0b;"1"=first@]
 
-loadf:{[p] system"l ",spath p;}
-loadcfg:{[module;dir]
-  f:$[(def:`default.csv)in f:key p:` sv dir,`config;distinct def,f;f];
-  if[not count f@:where f like"*csv";:()];
-  get".",tostr[module],".cfg,:1#.q";  / TODO - could this be nicer?
-  {[ns;p;f]
-    r:exec name!upper[typ]$default from("SC*";enlist",")0:` sv p,f;
-    @[ns;`cfg;,;r]}[` sv `,module;p]each f;
-  if[exists pp:` sv p,`pp.q;loadf pp];  / if post-process file (pp.q) exists, load it
- }
-
-env[`QI_INDEX_URL;RAW,DEFAULT_OWNER,"/qi/main/index.json";::]
-env[`QI_HOME;hsym`$getenv[`HOME],"/.qi";path]
-env[`QI_VENDOR;`:vendor/qi;path]
-env[`QI_LOCK;`:qi.lock;path]
-env[`QI_CONFIG;`:qi.json;path]
-env[`QI_OFFLINE;0b;"1"=first@]
-
-envpath:{path @[x;0;.env]}
-getindex:{[refresh] $[refresh|not exists p:path(.env.QI_HOME;`cache;`index.json);fetch[.env.QI_INDEX_URL;p];p]}
+getindex:{[refresh] $[refresh|not exists p:path(env.QI_HOME;`cache;`index.json);fetch[env.QI_INDEX_URL;p];p]}
 
 try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
 try1:{try[x;enlist y;z]}
 
-addPkg:{[name;ismodule] $[ismodule;`.qi.PKGS;`.qi.PROCS]?name;}
+reg:{[name;ismodule] $[ismodule;`.qi.PKGS;`.qi.PROCS]?name;}
 
 pmanage:{[ismodule;x]
   if[(name:first` vs sx:tosym x)in PKGS;:(::)];
   if[name in key`;:(::)];
   log.info $[ismodule;"Loading ";"Checking for "],string name;
-  if[exists pv:envpath(`QI_VENDOR;f:dotq sx);
-    addPkg[name;ismodule];
-    :loadf pv];
-  if[exists pl:.env.QI_LOCK;
+  if[exists pv:envpath`QI_VENDOR,name;
+    reg[name;ismodule];
+    :loadmodule[pv;name]];
+  if[exists pl:env.QI_LOCK;
     dbg2];
-  if[exists pc:.env.QI_CONFIG;
+  if[exists pc:env.QI_CONFIG;
     dbg3];
   m:readj[getindex 0b][`procs`modules ismodule]name;
   repo:$["/"in m`repo;m`repo;DEFAULT_OWNER,"/",m`repo];
@@ -105,9 +89,34 @@ pmanage:{[ismodule;x]
       cf 0:enlist sha]];
 
   loadcfg[name;first` vs mp];
-  addPkg[name;ismodule];
+  reg[name;ismodule];
   if[ismodule;loadf mp];
   }
+
+addproc:pmanage 0b
+include:.qi.use:pmanage 1b
+
+\
+
+.qi.system:{log.info"system ",x;system x}
+
+resolvej1:{
+    env:`;
+    if[not count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;env:a like"env:*";getenv env:`$4_a;a like".z.*";get a;()];
+      if[not null env;'"Unresolved env variable ",string env];
+      x];
+    ssr[x;y;tostr r]}
+
+/resolvej1:{$[count r:$[not(::)~r:vars sa:`$a:2_-1_y;r;a like"env:*";getenv`$4_a;a like".z.*";get a;()];ssr[x;y;tostr r];x]}
+
+resolvej:{$[count v:x ss"${";resolvej1/[x;{y[0]_(1+y 1)#x}[x]each v,'x ss"}"];x]}
+expandj:{$[(t:type x)in 0 99h;.z.s each x;t=10;resolvej x;x]}each
+parsej:{[p] .conf,:1#e:1#.q;vars::e;if[`vars in key a:readj p;vars,:v:a`vars;{vars[y]:r:resolvej x y;.conf[y]:r}[v]each key v];expandj a}
+
+if[`loadf in key opts:first each .Q.opt .z.x;
+  -1"hit loadf section in qi";
+  loadf opts`loadf];
+
 
 loadstack:{[f]
   procs:(r:.qi.parsej f)`processes;
@@ -124,18 +133,16 @@ loadstack:{[f]
   update port:cfg`base_port from`.conf.procs where proc=`c2;
  }
 
-addproc:pmanage 0b
-include:.qi.use:pmanage 1b
 
-/ try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
-
-if[`loadf in key opts:first each .Q.opt .z.x;
-  -1"hit loadf section in qi";
-  loadf opts`loadf];
-
-/.qi.loadstack `:equities.us1.json;
-
-\
+loadcfg:{[module;dir]
+  f:$[(def:`default.csv)in f:key p:` sv dir,`config;distinct def,f;f];
+  if[not count f@:where f like"*csv";:()];
+  get".",tostr[module],".cfg,:1#.q";  / TODO - could this be nicer?
+  {[ns;p;f]
+    r:exec name!upper[typ]$default from("SC*";enlist",")0:` sv p,f;
+    @[ns;`cfg;,;r]}[` sv `,module;p]each f;
+  if[exists pp:` sv p,`pp.q;loadf pp];  / if post-process file (pp.q) exists, load it
+ }
 
 tcfg:1#.q
 guess:{$[(t:type x)in 0 98 99h;.z.s each x;10<>abs t;x;-10=t;$["*J"x in .Q.n]x;","in x;.z.s each","vs x;x~x inter .Q.n,".";$["JF""."in x]x;"S"$x]}

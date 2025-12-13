@@ -16,7 +16,7 @@ npm install
 export QT_C2_PORT=5000
 ```
 
-If you are developing on a shared box, use a differnt port to your colleagues.
+If you are developing on a shared box, use a different port to your colleagues.
 
 ### 3. **Start your kdb+ process**
 

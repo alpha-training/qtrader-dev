@@ -19,10 +19,10 @@ format:{[fmt] if[not fmt in key render;bad_format];cfg.FORMAT:fmt}
 level:{[lvl] cfg.LEVEL:cfg.LEVELS?lvl}
 fields:{[d] cfg[`FIELDS]:d}
 
-init:{[d]
-  if[`level in key d;level d`level];
-  if[`format in key d;format d`format];
-  }
+/init:{[d]
+/  if[`level in key d;level d`level];
+/  if[`format in key d;format d`format];
+/  }
 
 printx:{[context;lvl;x]
  if[cfg.LEVEL<cfg.LEVELS?lvl;:()];d:();

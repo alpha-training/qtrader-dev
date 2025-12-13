@@ -1,5 +1,5 @@
 {
- if[not .qi.exists p:.qi.path(.paths.stack;`proc;.conf.name;`schema.txt);
+ if[not .qi.exists p:.qi.path(.paths.stack;`names;.conf.name;`schema.txt);
     .log.fatal"No schema file found: ",1_string p];
  if[count[t]>count vt:inter[key .schema.t;t:`$read0 p];
     .log.fatal"No schema found for: ",","sv string t except vt];
@@ -9,9 +9,9 @@
 \d .u
 path:getenv`QT_DATA_DEV1
 init:{w::t!(count t::tables`.)#()}
-del:{w[x]_:w[x;;0]?y};.z.pc:{del[;x]each t};
+del:{w[x]_:w[x;;0]?y};pc:{del[;x]each t};
 sel:{$[`~y;x;select from x where sym in y]}
-pub:{[t;x]{[t;x;w]if[count x:sel[x]w 1;(neg first w)(`upd;t;x)]}[t;x]each w t}
+pub:{[t;x]{[t;x;w]if[count x:sel[x]w 1;neg[first w](`upd;t;x)]}[t;x]each w t}
 add:{$[(count w x)>i:w[x;;0]?.z.w;.[`.u.w;(x;i;1);union;y];w[x],:enlist(.z.w;y)];(x;$[99=type v:value x;sel[v]y;@[0#v;`sym;`g#]])}
 sub:{if[x~`;:sub[;y]each t];if[not x in t;'x];del[x].z.w;add[x;y]}
 end:{(neg union/[w[;;0]])@\:(`.u.end;x)}
@@ -27,11 +27,13 @@ if[system"t";
  if[not -12=type first first x;if[d<"d"$a:.z.P;.z.ts[]];a:"p"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
  t insert x;if[l;l enlist (`upd;t;x);j+:1];}];
 
-if[not system"t";system"t ",string .conf.me.DEFAULT_TIMER;
+if[not system"t";system"t ",.qi.tostr .conf.qtimer;
   .event.addHandler[`.z.ts;{ts .z.D}];
  upd:{[t;x]ts"d"$a:.z.P;
  if[not -12=type first first x;a:"p"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
  f:key flip value t;pub[t;$[0>type first x;enlist f!x;flip f!x]];if[l;l enlist (`upd;t;x);i+:1];}];
 
 \d .
+
+.event.addHandler[`.z.pc;`.u.pc]
 .u.tick[]

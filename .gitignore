@@ -4,3 +4,4 @@ data/
 .vscode
 node_modules
 *.bkp
+conf/local*

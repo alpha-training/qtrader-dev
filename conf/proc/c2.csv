@@ -1,1 +1,2 @@
-BUSY_PERIOD,00:00:30,v
+busyperiod,00:00:30
+tailrows,20

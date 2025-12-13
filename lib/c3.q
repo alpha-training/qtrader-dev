@@ -12,12 +12,12 @@ down:{[senderinfo] .log.quit ".c3.down called by: ", .j.j senderinfo;}
 /heartbeat:{if[not null h:C2HANDLE;neg[h](`.c2.heartbeat;.conf.self.name;`pid`used`heap!(.z.i;.Q.w[]`used;.Q.w[]`heap))]}
 heartbeat:{
   if[null h:.ipc.conn`c2;:()];
-  neg[h](`.c2.heartbeat;.conf.self.name;`pid`used`heap!(.z.i;.Q.w[]`used;.Q.w[]`heap))
+  neg[h](`.c2.heartbeat;.conf.name;`pid`used`heap!(.z.i;.Q.w[]`used;.Q.w[]`heap))
     }
 
 c2reconnect:{
   if[null C2HANDLE;
-    if[not null port:.conf.c2_port;
+    if[not null port:.conf.base_port;
       if[not null h:@[hopen;port;0Ni];
         .log.info"Reconnected to c2";
         C2HANDLE::h]]];

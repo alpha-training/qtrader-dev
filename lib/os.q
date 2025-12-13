@@ -2,7 +2,7 @@
 
 \d .os
 W:.z.o like"w*"
-QBIN:.conf.stack.vars.qbin
+QBIN:.conf.qbin
 
 startproc:$[W;
             {[fileArgs;logfile]system"start /B cmd /c ",QBIN," ",ssr[fileArgs;"/";"\\"]," >> ",ssr[logfile;"/";"\\"]," 2>&1"};

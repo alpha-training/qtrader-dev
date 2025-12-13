@@ -1,10 +1,9 @@
 / adapted from https://github.com/simongarland/tick/blob/master/w.q
 
-path:.conf.stack.vars.data
-getTMPSAVE:{`$":",path,"/tmp.",(string .z.i),".",string x}  
-TMPSAVE:getTMPSAVE (.z.d)
+getTMPSAVE:{[dir;x]`$":",dir,.qi.tostr[x]except"."}.qi.spath .conf[`data`name],`$"tmp_",string[.z.i],"_"
+TMPSAVE:getTMPSAVE (.z.d)   / iw: brackets
 MAXROWS:10000
-KEEPONEXIT:any`keeponexit`koe in key .Q.opt .z.x
+KEEPONEXIT:any`keeponexit`koe in key .Q.opt .z.x        / iw: .qi.opts 
 
 append:{[t;data]
     t insert data;
@@ -56,4 +55,4 @@ disksort:{[t;c;a]
 / HARDCODE \cd if other than logdir/db
 
 / connect to ticker plant for (schema;(logcount;log))
-.u.rep .(.ipc.conn`tp1)"(.u.sub[`;`];`.u `i`L)"
+.u.rep .(.ipc.conn .conf.system_tp)"(.u.sub[`;`];`.u `i`L)"
