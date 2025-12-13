@@ -1,12 +1,7 @@
-\l lib/qi.q
-\l lib/tm.q
-\l lib/common.q
-\l lib/conf.q
-\l lib/os.q
-\l lib/schema.q
-\l lib/pubsub.q
+/ qtrader entry file
+/ q qt.q -name [process name]
 
-if[.conf.proc<>`c2;system"l lib/c3.q"]
+\l lib/common.q
 
 .qi.loadf` sv`:proc,.conf.proc;
 if[not system"t";system"t ",.qi.tostr .conf.qtimer]
