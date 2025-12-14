@@ -3,3 +3,8 @@ data_root,:data
 system_tp,tp0,s
 stackname,dev1,s
 qtimer,100
+testfh,10 30h
+testf,10.4 5.7
+test5,exit 0
+test6,10:25:30 10:36
+test7,2025.12.14D13:02:46 2025.12.14D15:02:46

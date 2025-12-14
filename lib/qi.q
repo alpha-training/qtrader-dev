@@ -49,6 +49,16 @@ getindex:{[refresh] $[refresh|not exists p:path(env.QI_HOME;`cache;`index.json);
 try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
 try1:{try[x;enlist y;z]}
 
+infer:{[m;x]
+  if[0=count x;:x];
+  if[(t:type x)in 0 98 99h;:.z.s[m]each x];
+  if[t<>10;:x];
+  if[" "in x;:$[a~inter[a:-1_x].Q.n," .:D";get x;.z.s[m]each x]];   / restricted get for infosec
+  if[" "<>i:(x like/:m)?1b;:i$$[i="M";-1_x;x]];
+  if[x~x inter .Q.n,".";:("JF""."in x)$x];
+  $[":"=x 0;`$x;0=s:sum x="`";x;"`"<>x 0;x;`$1_$[s=1;x;"`"vs x]]
+  }{"PTVUDMB"!(d,"D*";v,".",x,"*";v:u,":",a;u:a,":",a;d:m,y,a;(m:a,a,y,a:x,x),"m";"[0-1]")}["[0-9]";"[.-/]"]
+
 reg:{[name;ismodule] $[ismodule;`.qi.PKGS;`.qi.PROCS]?name;}
 
 pmanage:{[ismodule;x]
@@ -77,7 +87,7 @@ pmanage:{[ismodule;x]
     if[exists cf:path dir,`current;
       refresh:not sha~raze read0 cf]];
   dir2:path dir,$[isTag;();(`store;sha)];
-  mp:path dir2,f;
+  mp:path dir2,f;   / TODO - f not defined here
   if[refresh;
     tree_sha:jcurl[API,repo,"/git/commits/",sha][`tree]`sha;
     treeInfo:`typ xcol`type`path#/:jcurl[API,repo,"/git/trees/",tree_sha,"?recursive=1"]`tree;
