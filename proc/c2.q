@@ -2,15 +2,16 @@
 
 conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,logfile:`,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
 notfound:{[pname] string[pname]," process not found"}
-entry:{[pname] $[null(e::conns pname)`proc;();e]}
+getprocess:{[pname] $[null(pr::conns pname)`proc;();pr]}
 
-start:{[pname]
-  p:first exec port from conns where name=pname;
-  .os.startproc["scripts/boot.q -name ",string[pname]," -p ",string p;.conf.stack.vars.data,"/",string[pname],".log"];
-  .c2.conns[pname;`status`logfile]:(`up;`$string[pname],".log")
+up:{[pname]
+  sname:string pname;
+  if[()~x:getprocess pname;'".c2.up: ",sname," not found"];
+  .os.startproc["scripts/boot.q -name ",string[pname]," -p ",string x`port;logfile:.qi.spath(.conf.processlogs;sname,".log")];
+  .c2.conns[pname;`status`logfile]:(`up;hsym`$logfile)
  }
 
-startall:{start each exec name from .c2.conns}
+upall:{up each exec name from .c2.conns}
 
 kill:{[pname]
   .os.kill[first exec pid from conns where name=pname];
@@ -20,13 +21,16 @@ kill:{[pname]
 killall:{kill each exec name except `c2 from conns where status~`up}
 
 down:{[pname]
- if[()~e:conns pname;:".c2.down: ",string[pname]," not found"];sname:string pname;
- if[null h:e`handle;:".c2.down ",sname," handle is null"];
+ sname:string pname;
+ if[()~x:getprocess pname;'".c2.down: ",sname," not found"];
+ if[null h:x`handle;:()];
+ .log.info".c2.down - Shutting down ",sname;
  if[not first r:.qi.try[{neg[x]y};(h;(`.c3.down;`host`port`args!(.z.h;system"p";" "sv .z.x)));::];
- .log.error".c2.down ",sname," ",r 2];
- .c2.conns[pname;`used`heap`pid]:(0N;0N;0N)
+   .log.error".c2.down ",sname," ",r 2];
+ .c2.conns[pname;`used`heap`pid]:(0N;0N;0Ni)
  }
-downall:{down each exec name except`c2 from conns where status~`up}
+
+downall:{down each exec name from`.c2.conns where status in`up`busy}
 
 tail:{[pname]
   file:first exec logfile from conns where name=pname;
@@ -40,11 +44,9 @@ heartbeat:{[pname;info]
   from`.c2.conns where name=pname;
  }
 
-pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from `.c2.conns where handle=h}
+pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from`.c2.conns where handle=h}
 
-check:{
-  update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
- }
+check:{update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;}
 
 .event.addHandler[`.z.pc;`.c2.pc]
 .cron.add[`.c2.check;0Np;00:00:01]

@@ -16,17 +16,21 @@ expand:{
 
 u.load1conf:{[p]
   if[not .qi.exists p;:()];
-  { a:expand x`v;
-    r:$[null t:x`typ;.qi.infer2;upper[t]$]a;
-    sv[`;`.conf,x`k]set r}each flip`k`v`typ!("S*C";",")0:p;
+  if[count err:select from(a:flip`k`v!("S*";"=")0:p)where 0=count each v;
+    show err;.log.fatal"Badly formed ",1_string p];
+  {sv[`;`.conf,x`k]set .qi.infer2 expand x`v}each a;
   }
 
 u.loadconf:{
   f:{u.load1conf .qi.path .paths.conf,x};
-  f`global.csv;
-  f`local.csv;
-  f (sp:`stacks,.conf.stackname),`stack.csv;
-  if[not`qbin in key .conf;.conf.qbin:.qi.path(getenv`QHOME;.z.o;`q)];
+  f`global.conf;
+  f`local.conf;
+  u.loadstack sn:.conf.stackname;
+  f `proc,` sv proc,`conf;
+  f (sp:`stacks,sn),`stack.conf;
+  f sp,`names,sn,`name.conf;
+
+  if[not`qbin in key .conf;.conf.qbin:.qi.spath(getenv`QHOME;.z.o;`q)];
   if[not .qi.exists qb:.conf.qbin;
     .log.fatal".conf.qbin - file not found at ",.qi.tostr[qb],"\n\nFix: create or edit ",
     .qi.spath[.paths.conf,`local.csv]," with a valid entry:\nqbin=/path/to/qhome/",string[.z.o],"/q"];
@@ -46,12 +50,9 @@ u.loadstack:{[stackname]
   name::n;
   self::.conf.procs[n],key[def]_v n;
   proc::self`proc;
-  u.load1conf .qi.path .paths.conf,`proc,` sv proc,`csv;
-  u.load1conf .qi.path .paths.stack,`names,n,`name.csv;
  }
 
 pc:{if[count d:exec name from .ipc.conns where name in .conf.self.depends_on,null handle;.log.fatal"Lost connection to ",","sv string d]}
 
 .event.addHandler[`.z.pc;`.conf.pc];
 u.loadconf`;
-u.loadstack .conf.stackname;
