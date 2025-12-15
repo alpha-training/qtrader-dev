@@ -17,7 +17,7 @@ expand:{
 u.load1conf:{[p]
   if[not .qi.exists p;:()];
   { a:expand x`v;
-    r:$[null t:x`typ;.qi.infer;upper[t]$]a;
+    r:$[null t:x`typ;.qi.infer2;upper[t]$]a;
     sv[`;`.conf,x`k]set r}each flip`k`v`typ!("S*C";",")0:p;
   }
 
