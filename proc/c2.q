@@ -11,7 +11,7 @@ getprocess:{[pname] $[null(pr::conns pname)`proc;();pr]}
 up:{[pname]
   sname:string pname;
   if[()~x:getprocess pname;'".c2.up: ",sname," not found"];
-  .os.startproc["scripts/boot.q -name ",string[pname]," -p ",string x`port;logfile:.qi.spath(.conf.processlogs;sname,".log")];
+  .os.startproc["scripts/boot.q -name ",sname," -p ",string x`port;logfile:.qi.spath(.conf.processlogs;sname,".log")];
   .c2.conns[pname;`status`logfile]:(`up;hsym`$logfile)
  }
 
@@ -32,22 +32,20 @@ down:{[pname]
 downall:{down each exec name from .c2.conns where status in`up`busy}
 
 tail:{[pname]
-  if[()~x:getprocess pname;'".c2.tail: ",.qi.tostr[pname]," not found"];
+  if[()~x:getprocess pname;'".c2.tail: ",string[pname]," not found"];
   if[null x`logfile;:enlist"No log file"];
   if[not .qi.isfile p:.qi.path(`:logs/proclogs;x`logfile);:"Log file not found. Expected at ",1_string p];
   .os.tail[p;.conf.tailrows]
   }
 
 heartbeat:{[pname;info]
-  if[()~x:getprocess pname;'".c2.heartbeat: ",.qi.tostr[pname]," not found"];
+  if[()~x:getprocess pname;'".c2.heartbeat: ",string[pname]," not found"];
   .c2.conns[pname],:select handle:.z.w,pid,used,heap,status:`up,lastheartbeat:.z.p from info;
  }
 
 pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from`.c2.conns where handle=h}
 
-updAPI:{
-  .api.pub[`processes;0!.c2.conns];
- }
+updAPI:{.api.pub[`processes;0!.c2.conns];}
 
 check:{
   update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
@@ -58,18 +56,18 @@ check:{
   os.startproc:$[.os.W;
             {[fileArgs;logfile]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",ssr[logfile;"/";"\\"]," 2>&1"};
             {[fileArgs;logfile]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",logfile,"  2>&1 &"}];
+
   os.kill:$[.os.W;
         {[pid]system"taskkill /",string[pid]," /F"};
         {[pid]system"kill ",string pid}];
 
   os.tail:$[.os.W;
-        {[file;n]system"cmd /C powershell -Command Get-Content ",.os.towin[file]," -Tail ",string n};
-        {[file;n]system"tail -n ",string[n]," ",file}];
+        {[file;n]system"cmd /C powershell -Command Get-Content ",.os.towin[file]," -Tail ",.qi.tostr n};
+        {[file;n]system"tail -n ",.qi.tostr[n]," ",file}];
   }[]
 
 .event.addHandler[`.z.pc;`.c2.pc]
 .cron.add[`.c2.check;0Np;00:00:01]
-
 `:api/local_base_port.txt 0:enlist .qi.tostr .conf.base_port;
 
 /
