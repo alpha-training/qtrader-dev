@@ -4,15 +4,16 @@
 
 \d .c2
 
-conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,logfile:`,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
-notfound:{[pname] string[pname]," process not found"}
-getprocess:{[pname] $[null(pr::conns pname)`proc;();pr]}
+conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
+
+logfile:{[name] .qi.spath(.conf.processlogs;` sv name,`log)}
+
+getprocess:{[pname] $[null(x:conns pname)`proc;();x]}
 
 up:{[pname]
   sname:string pname;
   if[()~x:getprocess pname;'".c2.up: ",sname," not found"];
-  .os.startproc["scripts/boot.q -name ",sname," -p ",string x`port;logfile:.qi.spath(.conf.processlogs;sname,".log")];
-  .c2.conns[pname;`status`logfile]:(`up;hsym`$logfile)
+  os.startproc["qtrader.q -name ",sname;logfile pname];
  }
 
 upall:{up each exec name from .c2.conns where status=`down}
@@ -33,9 +34,8 @@ downall:{down each exec name from .c2.conns where status in`up`busy}
 
 tail:{[pname]
   if[()~x:getprocess pname;'".c2.tail: ",string[pname]," not found"];
-  if[null x`logfile;:enlist"No log file"];
-  if[not .qi.isfile p:.qi.path(`:logs/proclogs;x`logfile);:"Log file not found. Expected at ",1_string p];
-  .os.tail[p;.conf.tailrows]
+  if[not .qi.isfile p:logfile pname;:"Log file not found. Expected at ",p];
+  os.tail[p;.conf.tailrows]
   }
 
 heartbeat:{[pname;info]
