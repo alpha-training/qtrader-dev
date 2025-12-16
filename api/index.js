@@ -30,7 +30,7 @@ function openKdb() {
         return;
       }
 
-      console.log("Async update received for ", callback);
+      console.log("Async update received for ", a.callback);
 
       // Find the matching callback by callback name
       const cbIndex = kdbCallbacks.findIndex(c => c.callbackName === a.callback);
