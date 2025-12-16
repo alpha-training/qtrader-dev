@@ -6,8 +6,8 @@
 .qi.use`cron
 
 \l lib/tm.q
-\l lib/conf.q
 \l lib/os.q
+\l lib/conf.q
 \l lib/schema.q
 \l lib/pubsub.q
 
