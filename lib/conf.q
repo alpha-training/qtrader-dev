@@ -30,7 +30,7 @@ u.loadconf:{
   f (sp:`stacks,sn),`stack.conf;
   f sp,`names,sn,`name.conf;
 
-  if[not`qbin in key .conf;.conf.qbin:.qi.spath(getenv`QHOME;.z.o;`q)];
+  if[not`qbin in key .conf;.conf.qbin:.qi.spath(.os.path.resolve getenv`QHOME;.z.o;`q)];
   if[not .qi.exists qb:.conf.qbin;
     .log.fatal".conf.qbin - file not found at ",.qi.tostr[qb],"\n\nFix: create or edit ",
     .qi.spath[.paths.conf,`local.conf]," with a valid entry:\nqbin=PATH_TO_Q"];

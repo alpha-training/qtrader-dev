@@ -1,7 +1,13 @@
 / Operating system abstraction
 
 \d .os
+
 W:.z.o like"w*"
+
+path.towin:ssr[;"/";"\\"]
+path.fromwin:ssr[;"\\";"/"]
+path.resolve:$[W;path.fromwin x;::]
+
 QBIN:.conf.qbin
 
 startproc:$[W;
