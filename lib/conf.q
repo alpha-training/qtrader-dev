@@ -25,7 +25,7 @@ u.loadconf:{
   f:{u.load1conf .qi.path .paths.conf,x};
   f`global.conf;
   f`local.conf;
-  u.loadstack sn:.conf.stackname;
+  u.loadstack sn:.qi.tosym .conf.stackname;
   f `proc,` sv proc,`conf;
   f (sp:`stacks,sn),`stack.conf;
   f sp,`names,sn,`name.conf;

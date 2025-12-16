@@ -55,4 +55,4 @@ disksort:{[t;c;a]
 / HARDCODE \cd if other than logdir/db
 
 / connect to ticker plant for (schema;(logcount;log))
-.u.rep .(.ipc.conn .conf.system_tp)"(.u.sub[`;`];`.u `i`L)"
+.u.rep .(.ipc.conn .qi.tosym .conf.system_tp)"(.u.sub[`;`];`.u `i`L)"
