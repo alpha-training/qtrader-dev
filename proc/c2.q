@@ -57,6 +57,19 @@ check:{
   updAPI[];
   }
 
+{
+  startproc::$[.os.W;
+            {[fileArgs;logfile]system"start /B cmd /c ",.conf.qbin," ",ssr[fileArgs;"/";"\\"]," >> ",ssr[logfile;"/";"\\"]," 2>&1"};
+            {[fileArgs;logfile]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",logfile,"  2>&1 &"}];
+  kill::$[.os.W;
+        {[pid]system"taskkill /",string[pid]," /F"};
+        {[pid]system"kill ",string pid}];
+
+  tail::$[.os.W;
+        {[file;n]system"cmd /C powershell -Command Get-Content ",ssr[file;"/";"\\"]," -Tail ",string n};
+        {[file;n]system"tail -n ",string[n]," ",file}];
+  }[]
+
 .event.addHandler[`.z.pc;`.c2.pc]
 .cron.add[`.c2.check;0Np;00:00:01]
 
