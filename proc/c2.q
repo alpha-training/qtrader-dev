@@ -68,9 +68,7 @@ check:{
 .event.addHandler[`.z.pc;`.c2.pc]
 .cron.add[`.c2.check;0Np;00:00:01]
 
-\d .
-
-
+`:api/local_base_port.txt 0:enlist .qi.tostr .conf.base_port;
 
 /
 tailx:{[pname;n]

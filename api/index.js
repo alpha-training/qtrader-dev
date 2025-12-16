@@ -1,10 +1,12 @@
 import express from "express";
 import WebSocket from "ws";
+import fs from "fs";
 const app = express();
 const port = 3000;
 
 // Change these to match your running q process:
-const KDB_PORT = process.env.API_C2_PORT ? parseInt(process.env.API_C2_PORT, 10) : 8000;
+
+const KDB_PORT = fs.readFileSync("local_base_port.txt", "utf8").trim();
 const KDB_WS_URL = "ws://127.0.0.1:" + KDB_PORT;
 
 /* ----------------------- kdb websocket ----------------------- */
