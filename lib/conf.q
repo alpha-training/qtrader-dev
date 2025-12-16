@@ -33,7 +33,7 @@ u.loadconf:{
   if[not`qbin in key .conf;.conf.qbin:.qi.spath(getenv`QHOME;.z.o;`q)];
   if[not .qi.exists qb:.conf.qbin;
     .log.fatal".conf.qbin - file not found at ",.qi.tostr[qb],"\n\nFix: create or edit ",
-    .qi.spath[.paths.conf,`local.csv]," with a valid entry:\nqbin=/path/to/qhome/",string[.z.o],"/q"];
+    .qi.spath[.paths.conf,`local.conf]," with a valid entry:\nqbin=/path/to/qhome/",string[.z.o],"/q"];
  }
 
 u.loadstack:{[stackname]
