@@ -13,14 +13,10 @@ up:{[pname]
   .c2.conns[pname;`status`logfile]:(`up;hsym`$logfile)
  }
 
-upall:{up each exec name from .c2.conns}
+upall:{up each exec name from .c2.conns where status=`down}
 
-kill:{[pname]
-  .os.kill[first exec pid from conns where name=pname];
-  update status:`down from conns where name=pname;
- }
-
-killall:{kill each exec name except `c2 from conns where status~`up}
+kill:{[pname] if[not null pid:conns[pname]`pid;os.kill pid]}
+killall:{kill each exec name from conns where not null pid}
 
 down:{[pname]
  sname:string pname;
@@ -29,7 +25,6 @@ down:{[pname]
  .log.info".c2.down - Shutting down ",sname;
  if[not first r:.qi.try[{neg[x]y};(h;(`.c3.down;`host`port`args!(.z.h;system"p";" "sv .z.x)));::];
    .log.error".c2.down ",sname," ",r 2];
- .c2.conns[pname;`used`heap`pid]:(0N;0N;0Ni)
  }
 
 downall:{down each exec name from`.c2.conns where status in`up`busy}
@@ -58,15 +53,15 @@ check:{
   }
 
 {
-  startproc::$[.os.W;
-            {[fileArgs;logfile]system"start /B cmd /c ",.conf.qbin," ",ssr[fileArgs;"/";"\\"]," >> ",ssr[logfile;"/";"\\"]," 2>&1"};
+  os.startproc:$[.os.W;
+            {[fileArgs;logfile]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",ssr[logfile;"/";"\\"]," 2>&1"};
             {[fileArgs;logfile]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",logfile,"  2>&1 &"}];
-  kill::$[.os.W;
+  os.kill:$[.os.W;
         {[pid]system"taskkill /",string[pid]," /F"};
         {[pid]system"kill ",string pid}];
 
-  tail::$[.os.W;
-        {[file;n]system"cmd /C powershell -Command Get-Content ",ssr[file;"/";"\\"]," -Tail ",string n};
+  os.tail:$[.os.W;
+        {[file;n]system"cmd /C powershell -Command Get-Content ",.os.towin[file]," -Tail ",string n};
         {[file;n]system"tail -n ",string[n]," ",file}];
   }[]
 
