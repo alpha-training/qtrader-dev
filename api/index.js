@@ -1,44 +1,75 @@
 import express from "express";
-import net from "net";
-import { serialize, deserialize } from "./c.js";
-
+import WebSocket from "ws";
 const app = express();
 const port = 3000;
 
 // Change these to match your running q process:
-const KDB_HOST = "127.0.0.1";
-const KDB_PORT = process.env.QT_C2_PORT
-  ? parseInt(process.env.QT_C2_PORT, 10)
-  : 5000;
+const KDB_PORT = process.env.API_C2_PORT ? parseInt(process.env.API_C2_PORT, 10) : 8000;
+const KDB_WS_URL = "ws://127.0.0.1:" + KDB_PORT;
 
-/**
- * Send a query to kdb+ using raw IPC (c.js)
- */
-function kdbQuery(qExpression) {
-  return new Promise((resolve, reject) => {
-    const socket = new net.Socket();
+/* ----------------------- kdb websocket ----------------------- */
+let qws, kdbReady = false;
+const kdbQueue = [];
+const kdbCallbacks = [];
 
-    socket.connect(KDB_PORT, KDB_HOST, () => {
-      const msg = serialize(qExpression);
-      socket.write(Buffer.from(msg));
-    });
+function openKdb() {
+  qws = new WebSocket(KDB_WS_URL);
+  qws.onopen = () => { kdbReady = true; console.log("kdb ws open"); };
+  qws.onclose = (e) => { kdbReady = false; log("[kdb] ws close", e?.code, e?.reason ?? ""); };
+  qws.onerror = (e) => console.log("kdb ws error", e?.message ?? e);
 
-    socket.on("data", (data) => {
-      try {
-        const result = deserialize(new Uint8Array(data).buffer);
-        resolve(result);
-      } catch (err) {
-        reject(err);
-      } finally {
-        socket.end();
+  qws.onmessage = (msg) => {
+    try {
+      const data = msg.data.toString();
+      const a = JSON.parse(data);
+
+      if(a.callback == "upd"){
+        stream(a.result[0], a.result[1]);
+        return;
       }
-    });
 
-    socket.on("error", (err) => {
-      reject(err);
-    });
+      console.log("Async update received for ", callback);
+
+      // Find the matching callback by callback name
+      const cbIndex = kdbCallbacks.findIndex(c => c.callbackName === a.callback);
+
+      if (cbIndex >= 0) {
+        const cb = kdbCallbacks.splice(cbIndex, 1)[0]; // remove from array
+        cb.resolve(a.result);  // resolve the promise
+      } else {
+        console.log("No pending callback matches", a.callback);
+      }
+
+    } catch (err) {
+      console.error("[kdb] onmessage error:", err);
+    }
+  };
+}
+
+// Here we can 
+function stream (t, x) {
+  let n = x.length;
+  console.log("Streaming update received for " + t + " with " + n + " records");
+  switch(t){
+    case "process":
+      console.log("Process update received with " + n + " records");
+      break;
+  }
+}
+
+function sendToKdb(callback, cmd) {
+  return new Promise((resolve, reject) => {
+    if (kdbReady && qws.readyState === WebSocket.OPEN) {
+      const arg = { callback, cmd };
+      qws.send(JSON.stringify(arg));
+      console.log("Pushing callbacks");
+      kdbCallbacks.push({ callbackName: callback, resolve, reject });
+    } else {
+      kdbQueue.push({ cmd, callback, resolve, reject });
+    }
   });
 }
+
 
 // --- EXPRESS ENDPOINTS ----------------------------------------------------
 
@@ -46,9 +77,13 @@ app.get("/ping", (req, res) => {
   res.send("API is alive");
 });
 
+app.get('/users', (req, res) => {
+  res.json([{ name: 'Alice' }, { name: 'Bob' }]);
+});
+
 app.get("/query", async (req, res) => {
   try {
-    const result = await kdbQuery("2+3"); // example query
+    const result = await sendToKdb("query", "4+8");
     res.json({ result });
   } catch (err) {
     console.error(err);
@@ -120,6 +155,7 @@ app.get("/logs/:name", async (req, res) => {
   }
 });
 
+openKdb();
 
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}`);

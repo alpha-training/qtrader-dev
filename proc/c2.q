@@ -1,3 +1,5 @@
+\l lib/api.q
+
 \d .c2
 
 conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,logfile:`,lastheartbeat:0Np from .ipc.conns where proc<>`c2;
@@ -46,13 +48,19 @@ heartbeat:{[pname;info]
 
 pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from`.c2.conns where handle=h}
 
-check:{update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;}
+updAPI:{
+  .api.pub[`processes;0!.c2.conns];
+ }
+
+check:{
+  update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
+  updAPI[];
+  }
 
 .event.addHandler[`.z.pc;`.c2.pc]
 .cron.add[`.c2.check;0Np;00:00:01]
 
 \d .
-
 
 
 
