@@ -1,3 +1,5 @@
+/ Command & control
+
 \l lib/api.q
 
 \d .c2
@@ -22,23 +24,23 @@ down:{[pname]
  sname:string pname;
  if[()~x:getprocess pname;'".c2.down: ",sname," not found"];
  if[null h:x`handle;:()];
- .log.info".c2.down - Shutting down ",sname;
+ .log.info".c2.down ",sname;
  if[not first r:.qi.try[{neg[x]y};(h;(`.c3.down;`host`port`args!(.z.h;system"p";" "sv .z.x)));::];
    .log.error".c2.down ",sname," ",r 2];
  }
 
-downall:{down each exec name from`.c2.conns where status in`up`busy}
+downall:{down each exec name from .c2.conns where status in`up`busy}
 
 tail:{[pname]
-  file:first exec logfile from conns where name=pname;
-  if[not .qi.isfile` sv(`:logs/proclogs;file);0N!"error! logfile doe not exist";:()];
-  .os.tail[file;.conf.tailrows]
+  if[()~x:getprocess pname;'".c2.tail: ",.qi.tostr[pname]," not found"];
+  if[null x`logfile;:enlist"No log file"];
+  if[not .qi.isfile p:.qi.path(`:logs/proclogs;x`logfile);:"Log file not found. Expected at ",1_string p];
+  .os.tail[p;.conf.tailrows]
   }
 
 heartbeat:{[pname;info]
-  if[not pname in exec name from .c2.conns;:.log.warn".c2.heartbeat - unrecognized process name: ",string pname];
-  update handle:.z.w,pid:info`pid,used:info`used,heap:info`heap,status:`up,lastheartbeat:.z.p
-  from`.c2.conns where name=pname;
+  if[()~x:getprocess pname;'".c2.heartbeat: ",.qi.tostr[pname]," not found"];
+  .c2.conns[pname],:select handle:.z.w,pid,used,heap,status:`up,lastheartbeat:.z.p from info;
  }
 
 pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from`.c2.conns where handle=h}

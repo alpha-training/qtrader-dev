@@ -20,14 +20,12 @@ fenv:{[v;default;f] sv[`;`env,v]set $[count r:getenv v;f r;default];}
 envpath:{path @[x;0;env]}
 dotq:{$[x like"*.*";x;`$tostr[x],".q"]}
 opts:first each .Q.opt .z.x
-
-log.print:{[typ;x] $[type x;-1;-1" "sv]"qi ",typ," ",string[.z.p]," ",x}
-log.info:log.print"info";log.warn:log.print"warn";log.error:log.print"error"
+print:{[typ;msg] -1 string[.z.p]," ",typ," ",string[.z.w]," ",$[10=abs type msg;msg;-3!msg];}
 
 / web & json
 curl:system("curl -fsSL ",$[count TOKEN;"-H \"Authorization: Bearer ",TOKEN,"\" ";""]),
 jcurl:.j.k raze curl@
-fetch:{[url;p] log.info"fetch ",url;path[p]0:curl url}
+fetch:{[url;p] print["info"]"fetch ",url;path[p]0:curl url}
 readj:.j.k raze read0 path@
 
 / file system
@@ -54,7 +52,7 @@ reg:{[name;ismodule] $[ismodule;`.qi.PKGS;`.qi.PROCS]?name;}
 pmanage:{[ismodule;x]
   if[(name:first` vs sx:tosym x)in PKGS;:(::)];
   if[name in key`;:(::)];
-  log.info $[ismodule;"Loading ";"Checking for "],string name;
+  print["info"]$[ismodule;"Loading ";"Checking for "],string name;
   if[exists pv:envpath`QI_VENDOR,name;
     reg[name;ismodule];
     :loadmodule[pv;name]];
