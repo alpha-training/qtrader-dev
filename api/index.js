@@ -48,13 +48,12 @@ function openKdb() {
   };
 }
 
-// Here we can 
 function stream (t, x) {
   let n = x.length;
-  console.log("Streaming update received for " + t + " with " + n + " records");
+  //console.log("Streaming update received for " + t + " with " + n + " records");
   switch(t){
     case "process":
-      console.log("Process update received with " + n + " records");
+    //  console.log("Process update received with " + n + " records");
       break;
   }
 }
