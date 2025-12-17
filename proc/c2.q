@@ -12,9 +12,8 @@ getlog:{[name] .qi.spath(.conf.processlogs;` sv name,`log)}
 / process control functions
 p.up:{[pname;x]
   conns[pname;`goal]:`up;
-  if[.conf.max_start_attempts>conns[pname]`attempts;
-    conns[pname],:select attempts:1+0^attempts,laststart:.z.p from x;
-    os.startproc["qtrader.q -name ",string pname;getlog pname]];
+  conns[pname],:select attempts:1+0^attempts,laststart:.z.p from x;
+  os.startproc["qtrader.q -name ",string pname;getlog pname];
  }
 
 p.down:{[pname;x]
