@@ -18,7 +18,7 @@ p.up:{[pname;x]
  }
 
 p.down:{[pname;x]
- conns[pname],:`goal`attempts!(`down;0);
+ conns[pname;`goal]:`down;
  if[null h:x`handle;:()];
  .log.info".c2.down ",sname:string pname;
  if[not first r:.qi.try[{neg[x]y};(h;(`.c3.down;`host`port`args!(.z.h;system"p";" "sv .z.x)));::];
@@ -42,7 +42,7 @@ fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname
 upall:{update goal:`up,attempts:0 from`.c2.conns where null handle}
 downall:{
   update goal:`down from`.c2.conns;
-  down each exec name from .c2.conns where status in`up`busy;
+  down each exec name from .c2.conns where handle>0;
   }
 
 killall:{kill each exec name from conns where not null pid}
