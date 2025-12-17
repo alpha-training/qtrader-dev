@@ -34,7 +34,7 @@ p.heartbeat:{[pname;x;info] .c2.conns[pname],:select handle:.z.w,pid,used,heap,s
 / thin wrappers around functions in .c2.p (to check if process exists)
 fprocx:{[f;pname] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";.c2.p[f][pname;x]]}
 fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";.c2.p[f][pname;x;y]]}
-{[f] f set $[2=count get[p f]1;fprocx;fprocxy]f}each 1_key p;
+{x set $[2=count get[p x]1;fprocx;fprocxy]x}each 1_key p;
 
 / [f]all functions
 upall:{up each exec name from .c2.conns where status=`down;}
