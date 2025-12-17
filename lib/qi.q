@@ -21,6 +21,14 @@ envpath:{path @[x;0;env]}
 dotq:{$[x like"*.*";x;`$tostr[x],".q"]}
 opts:first each .Q.opt .z.x
 print:{[typ;msg] -1 string[.z.p]," ",typ," ",string[.z.w]," ",$[10=abs type msg;msg;-3!msg];}
+infer:{
+  if[(t:type x)in 0 98 99h;:.z.s each x];
+  if[t<>10;:x];
+  if[a~inter[a:-1_x]v:.Q.n," .:-";:get x];
+  if[" "in x;:.z.s each" "vs x];
+  if[x[0 10]like"[1-2]D";if[not null p:"P"$x;:p]];
+  $[":"=x 0;`$x;0=s:sum x="`";x;"`"<>x 0;x;`$1_$[s=1;x;"`"vs x]]
+  }
 
 / web & json
 curl:system("curl -fsSL ",$[count TOKEN;"-H \"Authorization: Bearer ",TOKEN,"\" ";""]),
@@ -93,8 +101,6 @@ pmanage:{[ismodule;x]
 
 addproc:pmanage 0b
 include:.qi.use:pmanage 1b
-
-\l lib/infer.q_
 
 \
 

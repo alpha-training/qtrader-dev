@@ -18,7 +18,7 @@ u.load1conf:{[p]
   if[not .qi.exists p;:()];
   if[count err:select from(a:flip`k`v!("S*";"=")0:p)where 0=count each v;
     show err;.log.fatal"Badly formed ",1_string p];
-  {sv[`;`.conf,x`k]set .qi.infer2 expand x`v}each a;
+  {sv[`;`.conf,x`k]set .qi.infer expand x`v}each a;
   }
 
 u.loadconf:{

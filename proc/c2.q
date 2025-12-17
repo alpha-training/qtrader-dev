@@ -10,6 +10,7 @@ getprocess:{[pname] $[null(x:conns pname)`proc;();x]}
 getlog:{[name] .qi.spath(.conf.processlogs;` sv name,`log)}
 
 / process control functions
+
 p.up:{[pname;x]
   if[.conf.max_start_attempts>conns[pname]`attempts;
     .[`.c2.conns;(pname;`attempts);{1+0^x}];
@@ -44,6 +45,7 @@ killall:{kill each exec name from conns where not null pid}
 / event functions
 pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from`.c2.conns where handle=h}
 updAPI:{.api.pub[`processes;0!.c2.conns];}
+
 check:{
   update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
   updAPI[];
@@ -51,7 +53,7 @@ check:{
 
 / initialisation
 {
-  os.startproc:$[.os.W;
+  os.startproc:$[.os.W;c2.p[f]
             {[fileArgs;getlog]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",ssr[getlog;"/";"\\"]," 2>&1"};
             {[fileArgs;getlog]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",getlog,"  2>&1 &"}];
 
