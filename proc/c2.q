@@ -52,13 +52,11 @@ updAPI:{.api.pub[`processes;0!.c2.conns];}
 
 check:{
   update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
-
   if[count tostart:select from .c2.conns where goal=`up,null handle,attempts<.conf.max_start_attempts;
     if[count tostart:delete from tostart where not null laststart,.conf.attempt_period>.z.p-laststart;
       stilldown:exec name from .c2.conns where null handle;
       tostart:tostart lj 1!select name,waiting_on:stilldown inter/:depends_on from .conf.procs;
       .c2.up each exec name from tostart where 0=count each waiting_on]];
-
   updAPI[];
   }
 
