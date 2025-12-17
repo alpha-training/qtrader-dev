@@ -54,7 +54,7 @@ check:{
 / initialisation
 {
   os.startproc:$[.os.W;c2.p[f]
-            {[fileArgs;getlog]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",ssr[getlog;"/";"\\"]," 2>&1"};
+            {[fileArgs;getlog]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",.os.towin[getlog]," 2>&1"};
             {[fileArgs;getlog]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",getlog,"  2>&1 &"}];
 
   os.kill:$[.os.W;
