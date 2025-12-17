@@ -10,7 +10,6 @@ getprocess:{[pname] $[null(x:conns pname)`proc;();x]}
 getlog:{[name] .qi.spath(.conf.processlogs;` sv name,`log)}
 
 / process control functions
-
 p.up:{[pname;x]
   if[.conf.max_start_attempts>conns[pname]`attempts;
     .[`.c2.conns;(pname;`attempts);{1+0^x}];
@@ -33,7 +32,7 @@ p.kill:{[pname;x] if[not null pid:x`pid;os.kill pid]}
 p.heartbeat:{[pname;x;info] .c2.conns[pname],:select handle:.z.w,pid,used,heap,status:`up,lastheartbeat:.z.p,attempts:0N from info;}
 
 / thin wrappers around functions in .c2.p (to check if process exists)
-fprocx:{[f;pname] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";p[f][pname;x]]}
+fprocx:{[f;pname] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";.p[f][pname;x]]}
 fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";p[f][pname;x;y]]}
 {x set $[2=count get[p x]1;fprocx;fprocxy]x}each 1_key p;
 
@@ -45,7 +44,6 @@ killall:{kill each exec name from conns where not null pid}
 / event functions
 pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N from`.c2.conns where handle=h}
 updAPI:{.api.pub[`processes;0!.c2.conns];}
-
 check:{
   update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
   updAPI[];
@@ -53,7 +51,7 @@ check:{
 
 / initialisation
 {
-  os.startproc:$[.os.W;c2.p[f]
+  os.startproc:$[.os.W;
             {[fileArgs;getlog]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",.os.towin[getlog]," 2>&1"};
             {[fileArgs;getlog]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",getlog,"  2>&1 &"}];
 
