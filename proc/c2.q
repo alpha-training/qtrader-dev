@@ -4,7 +4,7 @@
 
 \d .c2
 
-conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,lastheartbeat:0Np,attempts:0,goal:`,lastaction:`,lasttime:0Np from .ipc.conns where proc<>`c2;
+conns:1!select name,proc,port,handle,pid:0Ni,status:`down,used:0N,heap:0N,lastheartbeat:0Np,attempts:0,goal:`,laststart:0Np from .ipc.conns where proc<>`c2;
 
 getprocess:{[pname] $[null(x:conns pname)`proc;();x]}
 getlog:{[name] .qi.spath(.conf.processlogs;` sv name,`log)}
@@ -13,7 +13,7 @@ getlog:{[name] .qi.spath(.conf.processlogs;` sv name,`log)}
 p.up:{[pname;x]
   conns[pname;`goal]:`up;
   if[.conf.max_start_attempts>conns[pname]`attempts;
-    conns[pname],:select attempts:1+0^attempts,lastaction:`up,lasttime:.z.p from x;
+    conns[pname],:select attempts:1+0^attempts,laststart:.z.p from x;
     os.startproc["qtrader.q -name ",string pname;getlog pname]];
  }
 
@@ -21,7 +21,6 @@ p.down:{[pname;x]
  conns[pname],:`goal`attempts!(`down;0);
  if[null h:x`handle;:()];
  .log.info".c2.down ",sname:string pname;
- conns[pname],:select lastaction:`down,lasttime:.z.p from x;
  if[not first r:.qi.try[{neg[x]y};(h;(`.c3.down;`host`port`args!(.z.h;system"p";" "sv .z.x)));::];
    .log.error".c2.down ",sname," ",r 2];
  }
@@ -40,15 +39,34 @@ fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname
 {x set $[2=count get[p x]1;fprocx;fprocxy]x}each 1_key p;
 
 / [f]all functions
-upall:{up each exec name from .c2.conns where status=`down;}
-downall:{down each exec name from .c2.conns where status in`up`busy}
+upall:{update goal:`up,attempts:0 from`.c2.conns where null handle}
+downall:{
+  update goal:`down from`.c2.conns;
+  down each exec name from .c2.conns where status in`up`busy;
+  }
+
 killall:{kill each exec name from conns where not null pid}
 
 / event functions
 pc:{[h] update handle:0Ni,pid:0Ni,status:`down,used:0N,heap:0N,attempts:0N from`.c2.conns where handle=h}
 updAPI:{.api.pub[`processes;0!.c2.conns];}
+
 check:{
   update status:`busy from `.c2.conns where handle>0,lastheartbeat<.z.p-.conf.busyperiod;
+
+  tostart:select from .c2.conns where goal=`up,null handle,attempts<.conf.max_start_attempts;
+  tostart:delete from tostart where not null laststart,.conf.attempt_period>.z.p-laststart;
+  stilldown:exec name from .c2.conns where null handle;
+  tostart:tostart lj 1!select name,waiting_on:stilldown inter/:depends_on from .conf.procs;
+  tostart:select from tostart where 0=count each waiting_on;
+  if[count tostart;.c2.up each exec name from tostart];
+
+  /tostop:select from .c2.conns where goal=`down,handle>0;
+ / tostop:delete from tostop where lastaction=`down,.conf.attempt_period>.z.p-lasttime;
+
+  /if[count tostart;dbgstart];
+ / if[count tostop;dbgstop];
+
   updAPI[];
   }
 
