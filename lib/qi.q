@@ -21,6 +21,7 @@ envpath:{path @[x;0;env]}
 dotq:{$[x like"*.*";x;`$tostr[x],".q"]}
 opts:first each .Q.opt .z.x
 print:{[typ;msg] -1 string[.z.p]," ",typ," ",string[.z.w]," ",$[10=abs type msg;msg;-3!msg];}
+
 infer:{
   if[(t:type x)in 0 98 99h;:.z.s each x];
   if[t<>10;:x];

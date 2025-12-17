@@ -1,4 +1,6 @@
 
+/ configurations
+
 .paths.conf:`:conf    / TODO - perhaps change later
 
 \d .conf
