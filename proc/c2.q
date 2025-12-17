@@ -29,12 +29,12 @@ p.tail:{[pname;x]
   }
 
 p.kill:{[pname;x] if[not null pid:x`pid;os.kill pid]}
-p2.heartbeat:{[pname;x;info] .c2.conns[pname],:select handle:.z.w,pid,used,heap,status:`up,lastheartbeat:.z.p,attempts:0N from info;}
+p.heartbeat:{[pname;x;info] .c2.conns[pname],:select handle:.z.w,pid,used,heap,status:`up,lastheartbeat:.z.p,attempts:0N from info;}
 
-/ thin wrappers around monadic/dyadic functions in p/p2 (check if process exists)
-fprocx:{[f;pname] $[()~x:getprocess pname;'".c2.",string[f],": process ",string[pname]," not found in .c2.conns";.c2.p[f][pname;x]]}
-fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": process ",string[pname]," not found in .c2.conns";.c2.p2[f][pname;x;y]]}
-{[f]f set fprocx f;}each 1_key p;{[f]f set fprocxy f;}each 1_key p2;
+/ thin wrappers around functions in p (check if process exists)
+fprocx:{[f;pname] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";.c2.p[f][pname;x]]}
+fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname]," not found in .c2.conns";.c2.p[f][pname;x;y]]}
+{[f] f set $[2=count get[p f]1;fprocx;fprocxy]f}each 1_key p;
 
 / [f]all functions
 upall:{up each exec name from .c2.conns where status=`down;}
