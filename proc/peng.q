@@ -1,6 +1,6 @@
 \e 1
-path:((.conf.stack.vars.strats),"/"),/:(.conf.self.strats,\:"/default.json")
-{a:.qi.readj each x;a:update `$name,`$syms from a;stratVars::`name xkey a}path;
+path:{.qi.path .paths.conf,`strats,x,`default.json}each `$.conf.stacks.dev1.processes.peng.strats
+stratVars:sDicts[;0]!(sDicts:{a:.qi.readj x;a:update `$name,`$syms from a;(a`name;a)}each path)[;1]
 
 / Relative strength index - RSI - ranges from 0-100
 u.relativeStrength:{[px;n]
@@ -23,8 +23,8 @@ if[.conf.self.subscribe.tp0 like "all";.u.rep .(.ipc.conn`tp0)"(.u.sub[`;`];(`.u
 peter_strat1:{
     d:stratVars`peter_strat1;
     symsStr:"`","`" sv string (d:stratVars`peter_strat1)`syms;
-    if[not `bar1s in tables`;.u.rep .(.ipc.conn`tp0)"(.u.sub[`;",symsStr,"];(::))"];
-    t:bar1s;if[0=count bar1s;:`sym`strat xkey .schema.t.Intent]; / get all data for subscribed syms
+    if[not (tbl:`$d`sub) in tables`;.u.rep .(.ipc.conn`tp0)"(.u.sub[`;",symsStr,"];(::))"];
+    t:get tbl;if[0=count t;:ps::`sym`strat xkey .schema.t.Intent]; / get all data for subscribed syms
     t:update rsi:RSI[close;"j"$d`rsi_period] by sym from t;
     t:update enterLong:(not null rsi)&rsi<d`enter_long_rsi by sym from t;
     int:select sym,time from t where enterLong;

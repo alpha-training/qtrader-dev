@@ -1,10 +1,10 @@
 {
   "name": "peter_strat1",
-  "description": "Simple RSI strategy: enter long when RSI < 30, exit when RSI > 50",
-  "syms": ["AAPL", "MSFT", "GOOG","SDS","SPY","KAVL","BEAT","WOK"],
-  "timeframe": "1s",
+  "description": "Simple RSI strategy",
+  "syms": ["AAPL", "MSFT", "GOOG","SDS","SPY","KAVL","BEAT","WOK","YCBD","AKAN","ATPC","DRCT","SOXL","TSLA","ADTX","TSLL","QQQ","BMNU","NVDA","TQQQ","SRXH","TLRY","SOXS","SLV","SQQQ","NFLX"],
   "rsi_period": 14,
   "enter_long_rsi": 30,
   "exit_long_rsi": 50,
-  "position_size": 100
+  "position_size": 100,
+  "sub":"bar1s"
 }
