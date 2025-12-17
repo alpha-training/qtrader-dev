@@ -53,7 +53,10 @@ check:{
 {
   os.startproc:$[.os.W;
             {[fileArgs;getlog]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",.os.towin[getlog]," 2>&1"};
-            {[fileArgs;getlog]system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",getlog,"  2>&1 &"}];
+
+            {[fileArgs;getlog]
+            system"mkdir -p ",.qi.spath .conf.processlogs;
+            system"nohup ",.conf.qbin," ",fileArgs," < /dev/null >> ",getlog,"  2>&1 &"}];
 
   os.kill:$[.os.W;
         {[pid]system"taskkill /",string[pid]," /F"};
