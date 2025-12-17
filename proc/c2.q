@@ -39,7 +39,7 @@ fprocxy:{[f;pname;y] $[()~x:getprocess pname;'".c2.",string[f],": ",string[pname
 {x set $[2=count get[p x]1;fprocx;fprocxy]x}each 1_key p;
 
 / [f]all functions
-upall:{update goal:`up,attempts:0 from`.c2.conns where null handle}
+upall:{update goal:`up,attempts:0 from`.c2.conns where null handle;}
 downall:{
   update goal:`down from`.c2.conns;
   down each exec name from .c2.conns where handle>0;
@@ -89,7 +89,7 @@ check:{
   }[]
 
 .event.addHandler[`.z.pc;`.c2.pc]
-.cron.add[`.c2.check;0Np;00:00:01]
+.cron.add[`.c2.check;0Np;00:00:00.25]
 `:api/local_base_port.txt 0:enlist .qi.tostr .conf.base_port;
 
 /
