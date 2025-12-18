@@ -61,9 +61,12 @@ check:{
   }
 
 / initialisation
+/ system "start /B \"\" cmd /c \"C:/q/w64/q.exe qtrader.q -name tp0 < NUL >> data/dev1/processlogs/tp0.log 2>&1\""
 {
   os.startproc:$[.os.W;
-    {[fileArgs;logfile]system"start /B cmd /c ",.conf.qbin," ",.os.towin[fileArgs]," >> ",.os.towin[logfile]," 2>&1"};
+    {[fileArgs;logfile]
+    system "cmd /c if not exist \"",p,"\" mkdir \"",(p:.qi.spath .conf.processlogs),"\"";
+    system"start /B \"\" cmd /c \"",.conf.qbin," ",fileArgs," < NUL >> ",logfile," 2>&1\""};
 
     {[fileArgs;logfile]
       system"mkdir -p ",.qi.spath .conf.processlogs;
