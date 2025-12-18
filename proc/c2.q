@@ -81,7 +81,7 @@ check:{
     {[logfile;n]system"tail -n ",.qi.tostr[n]," ",logfile}];
   }[]
 
-.event.addHandler[`.z.pc;`.c2.pc]
+.event.addhandler[`.z.pc;`.c2.pc]
 .cron.add[`.c2.check;0Np;00:00:00.25]
 `:api/local_base_port.txt 0:enlist .qi.tostr .conf.base_port;
 

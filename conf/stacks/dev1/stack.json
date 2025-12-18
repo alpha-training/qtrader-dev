@@ -14,7 +14,8 @@
       "port_offset": 11,
       "subscribe": {
         "ctp": []
-      }
+      },
+      "depends_on" : ["tp0"]
     },
     "wdb": {
       "proc": "wdb",
@@ -38,14 +39,6 @@
         "10"
       ]
     },
-    "ctp": {
-      "proc": "ctp",
-      "port_offset": 13,
-      "subscribe": {
-        "tp0": [],
-        "tp1": []
-      }
-    },
     "hdb": {
       "proc": "hdb",
       "port_offset": 20,
@@ -54,16 +47,6 @@
     "eng1": {
       "proc": "eng",
       "port_offset": 30,
-      "depends_on" : ["tp0", "net"]
-    },
-    "peng": {
-      "proc": "peng",
-      "port_offset": 35,
-      "strats" : ["peter_strat1"],
-      "subscribe" : {
-        "tp0": "dynamic",
-        "tp1": "all"
-      },
       "depends_on" : ["tp0", "net"]
     },
     "net": {

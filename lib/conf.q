@@ -56,5 +56,5 @@ u.loadstack:{[stackname]
 
 pc:{if[count d:exec name from .ipc.conns where name in .conf.self.depends_on,null handle;.log.fatal"Lost connection to ",","sv string d]}
 
-.event.addHandler[`.z.pc;`.conf.pc];
+.event.addhandler[`.z.pc;`.conf.pc];
 u.loadconf`;

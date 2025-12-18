@@ -24,19 +24,19 @@ endofday:{end d;d+:1;if[l;hclose l;l::0(`.u.ld;d)]};
 ts:{if[d<x;if[d<x-1;system"t 0";'"more than one day?"];endofday[]]};
 if[system"t";
  pub:{pub'[t;value each t];@[`.;t;@[;`sym;`g#]0#];i::j;ts .z.D};
- .event.addHandler[`.z.ts;`.u.pub];
+ .event.addhandler[`.z.ts;`.u.pub];
  upd:{[t;x]
  if[not -12=type first first x;if[d<"d"$a:.z.P;.z.ts[]];a:"p"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
  t insert x;if[l;l enlist (`upd;t;x);j+:1];}];
 
 if[not system"t";system"t ",.qi.tostr .conf.qtimer;
    tickchecker:{ts .z.D};
-  .event.addHandler[`.z.ts;`.u.tickchecker];
+  .event.addhandler[`.z.ts;`.u.tickchecker];
  upd:{[t;x]ts"d"$a:.z.P;
  if[not -12=type first first x;a:"p"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
  f:key flip value t;pub[t;$[0>type first x;enlist f!x;flip f!x]];if[l;l enlist (`upd;t;x);i+:1];}];
 
 \d .
 
-.event.addHandler[`.z.pc;`.u.pc]
+.event.addhandler[`.z.pc;`.u.pc]
 .u.tick[]

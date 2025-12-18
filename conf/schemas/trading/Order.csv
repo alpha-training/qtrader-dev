@@ -5,10 +5,6 @@ side,i
 price,f
 size,j
 status,s
-pending,j
 filled,j
-algo,s
-urgency,f
-tsnew,p
-tsupdate,p
-note,*
+created,p
+active,b

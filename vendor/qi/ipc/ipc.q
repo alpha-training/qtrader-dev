@@ -19,4 +19,4 @@ pc:{[h] update handle:0Ni from`.ipc.conns where handle=h}
 
 \d .
 
-.event.addHandler[`.z.pc;`.ipc.pc]
+.event.addhandler[`.z.pc;`.ipc.pc]

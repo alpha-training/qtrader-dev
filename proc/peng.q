@@ -35,4 +35,4 @@ peter_strat1:{
 / publish intents
 pub_intents:{if[0<>count a:peter_strat1[];.ipc.conn[`net](`intent;a)]}
 
-.event.addHandler[`.z.ts;`pub_intents]
+.event.addhandler[`.z.ts;`pub_intents]
