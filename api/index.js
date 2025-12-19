@@ -94,8 +94,8 @@ app.get("/query", async (req, res) => {
 
 app.get("/state", async (req, res) => {
   try {
-    const result = await kdbQuery(".c2.procs"); //c2 state of procceses table
-    res.json(result);
+    const result = await sendToKdb(".c2.conns", ".c2.conns");
+    res.json({ result });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to get state" });
