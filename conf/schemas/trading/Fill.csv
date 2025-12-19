@@ -3,5 +3,5 @@ sym,s
 fillid,j
 orderid,j
 side,i
-qty,j
+size,j
 price,f

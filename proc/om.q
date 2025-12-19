@@ -1,15 +1,19 @@
 / Order management
 
+NET:0Ni
+
 initIDs:{[d] ORDER_ID::.conf.orderid_step*7h$d}
 
-genid:{[n;x] n set last r:get[n]+$[1=c:count x;1;1+x];r}
+genid:{[n;x] if[not count x;:0#0]; n set last r:get[n]+$[1=c:count x;1;1+x];r}
 genoid:genid`ORDER_ID
 .u.end:{initIDs x+1;}
 
 Req:`sym xkey .schema.t.Req
 Order:update `g#sym from`orderid xkey .schema.t.Order
+Position:`sym xkey .schema.t.Position
 
 req:{
+  if[null NET;NET::.z.w];
   s:distinct x`sym;
   a:update 0^current from x lj select current:sum side*size by sym from Order where sym in s,active;
   if[not count a:select from(update delta:size-current,side:0Ni from a)where delta<>0;:()];
@@ -26,6 +30,21 @@ sendnew:{[x]
   pub[`Order;o];
   }
 
+/ updates from the broker
+brupd:{[t;x]
+  if[t=`Order;:t upsert x];
+  if[t=`Fill;
+    a:select position:sum side*size by sym from x; 
+    p:update time:.z.p,0^position,0f^vwap from([]sym:distinct x`sym)#Position;
+    p+:a;
+    if[not null NET;
+      neg[NET](`omupd;`Position;p);
+      pubsert[`Position;p]]];
+ }
+
 sendcancels:{[oids] if[count oids;.ipc.async[`devbroker](`cancel;oids)]}
+
+.om.pc:{[h] if[NET=h;NET::0Ni]}
+.event.addhandler[`.z.pc;`.om.pc]
 
 initIDs .z.d;

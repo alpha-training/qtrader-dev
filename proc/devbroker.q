@@ -1,8 +1,13 @@
 OM:0Ni
-
+genid:{[n;x] if[not count x;:0#0];n set last r:get[n]+$[1=c:count x;1;1+x];r}
+genfid:genid`FILL_ID
+initIDs:{FILL_ID::.conf.orderid_step*7h$.z.d}
+updOMHandle:{if[OM<>h:.z.w;OM::h]}
 Order:`orderid xkey .schema.t.Order
-new:`Order upsert
-cancel:{[oids] pubsert[`Order]update status:`cancelled,active:0b from select from Order where orderid in oids,active;}
+new:{updOMHandle`;`Order upsert x;}
+cancel:{[oids] updOMHandle`; pubsert[`Order]update status:`cancelled,active:0b from select from Order where orderid in oids,active;}
+
+toOM:{[t;x] if[not null OM;if[count x;neg[OM](`brupd;t;x)]]}
 
 check:{
   if[0=count o:select from Order where active;:()];
@@ -12,10 +17,17 @@ check:{
   o:update status:`partialfill from o where fill>0,size>filled;
   o:update status:`filled,active:0b from o where fill>0,size=filled;
   o:update status:`new,changed:1b from o where status=`pending;
-  pubsert[`Order;delete fill,changed from select from o where changed];
+  pubsert[`Order;ro:delete fill,changed from select from o where changed];
+  toOM[`Order;ro];
+  if[count fo:select time,sym,fillid:genfid i,orderid,side,size:fill,price from o where fill>0;
+    toOM[`Fill;fo];
+    pub[`Fill;fo]];
  }
 
 .db.pc:{[h] if[h=OM;OM::0Ni;delete from`Order]}
 
-.cron.add[`check;0Np;00:00:01]
+
 .event.addhandler[`.z.pc;`.db.pc]
+initIDs`;
+.cron.add[`check;0Np;00:00:01];
+.cron.add[`initIDs;"p"$.z.d+1;1D];

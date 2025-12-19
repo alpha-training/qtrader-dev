@@ -15,3 +15,9 @@ intent:{[x]
   if[count rq:select from rq where size<>0;
     .ipc.async[`om](`req;rq)];
  }
+
+/ updates from the om
+omupd:{[t;x] 
+  if[count agg:Agg ij 1!select sym,time,pos:position from x;
+    pubsert[`Agg;agg]];
+  }
