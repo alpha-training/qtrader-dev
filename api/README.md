@@ -23,7 +23,7 @@ If you are developing on a shared box, use a different port to your colleagues.
 Make sure your c2 process is running e.g.
 
 ```bash
-q script/boot.q -name c2
+q qtrader.q -name c2
 ```
 
 ### 4. **Start the API**
