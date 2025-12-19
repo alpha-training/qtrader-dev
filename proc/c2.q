@@ -61,7 +61,6 @@ check:{
   }
 
 / initialisation
-/ system "start /B \"\" cmd /c \"C:/q/w64/q.exe qtrader.q -name tp0 < NUL >> data/dev1/processlogs/tp0.log 2>&1\""
 {
   os.startproc:$[.os.W;
     {[fileArgs;logfile]
