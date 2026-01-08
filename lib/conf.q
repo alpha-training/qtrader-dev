@@ -31,6 +31,7 @@ u.loadconf:{
   f `proc,` sv proc,`conf;
   f (sp:`stacks,sn),`stack.conf;
   f sp,`names,sn,`name.conf;
+  if[count opts:delete name from .qi.opts;.conf,:.qi.infer opts];
 
   if[not`qbin in key .conf;.conf.qbin:.qi.spath(.os.path getenv`QHOME;.z.o;$[.os.W;`q.exe;`q])];
   if[not .qi.exists qb:.conf.qbin;

@@ -10,5 +10,6 @@
 \l lib/conf.q
 \l lib/schema.q
 \l lib/pubsub.q
+\l lib/tr.q
 
 if[.conf.proc<>`c2;system"l lib/c3.q"]

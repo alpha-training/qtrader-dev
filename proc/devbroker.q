@@ -1,6 +1,5 @@
 OM:0Ni
-genid:{[n;x] if[not count x;:0#0];n set last r:get[n]+$[1=c:count x;1;1+x];r}
-genfid:genid`FILL_ID
+genfillid:.tr.genid`FILL_ID
 initIDs:{FILL_ID::.conf.orderid_step*7h$.z.d}
 updOMHandle:{if[OM<>h:.z.w;OM::h]}
 Order:`orderid xkey .schema.t.Order
@@ -19,7 +18,7 @@ check:{
   o:update status:`new,changed:1b from o where status=`pending;
   pubsert[`Order;ro:delete fill,changed from select from o where changed];
   toOM[`Order;ro];
-  if[count fo:select time,sym,fillid:genfid i,orderid,side,size:fill,price from o where fill>0;
+  if[count fo:select time,sym,fillid:genfillid i,orderid,side,size:fill,price from o where fill>0;
     toOM[`Fill;fo];
     pub[`Fill;fo]];
  }

@@ -2,6 +2,7 @@
 / In testing mode
 
 sendintent:{
-  a:([]time:2#.tm.now`;sym:`AAPL`AAPL;strat:`strat1`strat2;tgtpos:100 200;urgency:.5 .8;info:("";""));
-  .ipc.async[`net](`intent;a);
+  n:1+rand 5;
+  a:([]time:n#.tm.now`;sym:neg[n]?`AAPL`JPM`TSLA`IBM`GE;strat:` sv'.conf.name,'neg[n]?`strat1`strat2`strat3`strat4`strat5;tgtpos:100*1+n?10;urgency:.1*1+n?10;info:string n#`);
+  .ipc.async[`om](`intent;a);
  }

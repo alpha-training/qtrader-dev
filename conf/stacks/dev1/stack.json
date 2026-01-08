@@ -1,5 +1,5 @@
 {
-  "description": "US Equities DEV",
+  "description": "Binance DEV",
   "processes": {
     "tp0": {
       "proc": "tp",
@@ -23,13 +23,7 @@
       "dir" : "$data/wdb",
       "subscribe": {
         "ctp": []
-      },
-      "args": [
-        "-write_every",
-        "00:30",
-        "-hdb",
-        "hdb"
-      ]
+      }
     },
     "tp1": {
       "proc": "tp",
@@ -47,12 +41,14 @@
     "eng1": {
       "proc": "eng",
       "port_offset": 30,
-      "depends_on" : ["tp0", "net"]
+      "depends_on" : ["tp0", "om"],
+      "strategies" : ["mr_test1.qs"]
     },
-    "net": {
-      "proc": "net",
-      "port_offset": 40,
-      "depends_on" : ["tp0", "om"]
+    "eng2": {
+      "proc": "eng",
+      "port_offset": 31,
+      "depends_on" : ["tp0", "om"],
+      "strategies" : ["mr_test1.qs"]
     },
     "om": {
       "proc": "om",
