@@ -1,6 +1,6 @@
 # Q Sharpe sample mean reverting strategy
 
-vars:
+params:
   lookback
   atr_lookback
   vol_lookback

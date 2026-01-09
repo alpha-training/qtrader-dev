@@ -1,0 +1,8 @@
+lookback=50
+vol_lookback=20
+max_hold_bars=60
+z_enter=1
+z_exit=-1
+min_volume_ratio=2f
+atr_mult=2.5
+atr_lookback=30

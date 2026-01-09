@@ -31,6 +31,24 @@ infer:{
   $[":"=x 0;`$x;0=s:sum x="`";x;"`"<>x 0;x;`$1_$[s=1;x;"`"vs x]]
   }
 
+expand:{
+  if[0=count x;:x];
+  if[(t:type x)in 0 98 99h;:.z.s each x];
+  if[t<>10;:x];
+  if[not sum d:x="$";:x];
+  a:where[d|not x in .Q.an]_x;
+  raze@[a;where a like"$*";{$[(::)~r:.conf`$1_x;"MISSING";tostr r]}]
+ }
+
+loadcfg:{[ns;px]
+  if[not exists p:path px;:()];
+  s@:where(s:read0 p)like"[A-z]*";
+  s@:where 1=sum each s="=";
+  if[count err:select from(a:flip`k`v!("S*";"=")0:s)where 0=count each v;
+    show err;.log.fatal"Badly formed ",1_string p];
+  {sv[`;x,y`k]set infer expand y`v}[ns]each a;
+  }
+
 / web & json
 curl:system("curl -fsSL ",$[count TOKEN;"-H \"Authorization: Bearer ",TOKEN,"\" ";""]),
 jcurl:.j.k raze curl@

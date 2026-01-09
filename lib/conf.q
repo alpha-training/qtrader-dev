@@ -7,24 +7,8 @@
 
 name:proc:`
 
-expand:{
-  if[0=count x;:x];
-  if[(t:type x)in 0 98 99h;:.z.s each x];
-  if[t<>10;:x];
-  if[not sum d:x="$";:x];
-  a:where[d|not x in .Q.an]_x;
-  raze@[a;where a like"$*";{$[(::)~r:.conf`$1_x;"MISSING";.qi.tostr r]}]
- }
-
-u.load1conf:{[p]
-  if[not .qi.exists p;:()];
-  if[count err:select from(a:flip`k`v!("S*";"=")0:p)where 0=count each v;
-    show err;.log.fatal"Badly formed ",1_string p];
-  {sv[`;`.conf,x`k]set .qi.infer expand x`v}each a;
-  }
-
 u.loadconf:{
-  f:{u.load1conf .qi.path .paths.conf,x};
+  f:{x .qi.path .paths.conf,y}.qi.loadcfg`.conf;
   f`global.conf;
   f`local.conf;
   u.loadstack sn:.qi.tosym .conf.stackname;
