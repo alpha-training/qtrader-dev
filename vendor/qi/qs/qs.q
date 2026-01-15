@@ -48,7 +48,7 @@ parse1Definition:{
   k,":",v
   }
 
-findWord:{x ss/:{a,"]",x,(a:"[^A-z"),",_,0-9]"}each y}
+findWord:{x ss/:{a,x,a:"[^A-z,_,0-9]"}each y}
 
 / e.g. stdev(close, lookback) - lookback*some_val
 parse1Expression:{[x]
