@@ -48,17 +48,19 @@ parse1Definition:{
   k,":",v
   }
 
+findWord:{x ss/:{a,"]",x,(a:"[^A-z"),",_,0-9]"}each y}
+
 / e.g. stdev(close, lookback) - lookback*some_val
 parse1Expression:{[x]
   if[count x ss"==";'"Use a single = to check for equality: ",x];
   s:a,x,a:"\001";
   p:1_key .params;
-  if[count pm:ungroup([]p;loc:1+s ss/:{x,y,x}["[^A-z]"]each string p);
+  if[count pm:ungroup([]p;loc:1+findWord[s;string p]);
     pm:update n:count each string p from`loc xasc pm;
     a:pm[`loc]_s;
     s:(first[pm`loc]#s),raze{.qi.tostr[.params y`p],y[`n]_x}'[a;pm]];
   s:ssr[s;"--";""];   / TODO - bit hacky
-  m:ungroup([]func:F;loc:s ss/:{x,y,x}["[^A-z]"]each string F);
+  m:ungroup([]func:F;loc:findWord[s;string F]);
   replaces:parse1Function[s]each m;
   1_-1_s{ssr[x;y 0;y 1]}/replaces
  }
@@ -85,4 +87,9 @@ lparams:{.qi.loadcfg[`.params;`:strategies/params,x]}
 lparams`defaults.params
 lparams`mr.params
 
-.qs.l`:strategies/mr1.qs
+{
+  if[not count .z.x;-1"Usage q qs.q strategy_file";exit 1];
+  if[not .qi.exists p:.qi.path .qi.ext["strategies/",first .z.x;".qs"];-1@1_.qi.tostr[p]," not found";exit 1];
+  .qs.l p;
+ }[];
+

@@ -1,5 +1,9 @@
 \d .qs
 
+/ testing functions
+fn.add:{x+y}
+fn.add3:{x+y+z}
+
 / .qs.fn = functions
 fn.sma:{[px;n] n mavg px}
 fn.stdev:{[px;n] n mdev px}

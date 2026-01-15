@@ -18,7 +18,8 @@ isfile:{p~key p:path x}
 files:{(raze/){$[p~k:key p:path x;p;.z.s each p,'k]}x}
 fenv:{[v;default;f] sv[`;`env,v]set $[count r:getenv v;f r;default];}
 envpath:{path @[x;0;env]}
-dotq:{$[x like"*.*";x;`$tostr[x],".q"]}
+ext:{$[x like"*.*";x;`$tostr[x],y]}
+dotq:ext[;".q"]
 opts:first each .Q.opt .z.x
 print:{[typ;msg] -1 string[.z.p]," ",typ," ",string[.z.w]," ",$[10=abs type msg;msg;-3!msg];}
 
