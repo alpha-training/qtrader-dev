@@ -2,13 +2,6 @@
 
 \d .ta
 
-u.bycols:{a!a:`date`sym`tenor inter cols x}
-
-/ Relative strength index - RSI - ranges from 0-100
-u.relativeStrength:{[px;n]
-  start:avg(n+1)#px;
-  (n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_px;n]}
-
 sma:{[px;n] n mavg px}
 stdev:{[px;n] n mdev px}
 
@@ -18,6 +11,24 @@ atr:{[high;low;close;n]
   lcl:abs low-pclose;
   n mavg max(tr;hcl;lcl)  / TODO - change to Wilder's smoothing?
   }
+
+/ proj* - functions with projected arguments
+proj.atr:`high`low`close
+
+{[f](`$string[f],"x")set get f}each 1_key proj;
+
+/ u.fv = function valence
+{[f] sv[`;`u.fv,f]set count[get[get f]1]-$[(::)~p:proj f;0;count p]}each system"f .ta";
+
+/.ta:asc[key fn]#fn;
+
+/
+u.bycols:{a!a:`date`sym`tenor inter cols x}
+
+/ Relative strength index - RSI - ranges from 0-100
+u.relativeStrength:{[px;n]
+  start:avg(n+1)#px;
+  (n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_px;n]}
 
 / public 
 RSI:{[px;n]
@@ -361,13 +372,3 @@ WILLR:{[x;n]
 
 /INTER:cfg.SHOW_INTERMEDIARY
 INTER:1b
-
-/ proj* - functions with projected arguments
-proj.atr:`high`low`close
-
-{[f](`$string[f],"x")set get f}each 1_key proj;
-
-/ u.fv = function valence
-{[f] sv[`;`u.fv,f]set count[get[get f]1]-$[(::)~p:proj f;0;count p]}each system"f .ta";
-
-/.ta:asc[key fn]#fn;
