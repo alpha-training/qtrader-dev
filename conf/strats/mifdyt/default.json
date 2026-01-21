@@ -1,0 +1,12 @@
+{
+  "name": "mifdyt",
+  "description": "Based on FMZQuant Dynamic Trailing Strat",
+  "syms": [""],
+  "rsi_period": 14,
+  "volspike_period": 20,
+  "rsi_threshold": 40,
+  "stochRSI_threshold": 20,
+  "position_size": 100,
+  "sub":"bar1s",
+  "urgency": 0.5
+}
