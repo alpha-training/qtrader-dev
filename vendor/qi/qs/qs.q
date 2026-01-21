@@ -1,11 +1,12 @@
 / translate qsharpe files into q
 
 \l lib/qi.q
-\l vendor/qi/qs/fn.q
+\l vendor/qi/ta/ta.q
+.qi.loadcfg[`.params.ta;`:vendor/qi/ta/defaults.params]
 
 \d .qs
 
-F:system"f .qs.fn"
+F:system"f .ta"
 /MF:(F,\:"("),F,\:" ("
 HEADERS:string`params`state`indicators`enter`signal_exit`stop_loss`take_profit`time_stop`trailing_stop`exit_policy`execution
 
@@ -23,7 +24,7 @@ processSection:{[x]
  }
 
 ps.params:{
-  if[count invalid:(p:`$tx:trim x)except 1_key .params;
+  if[count invalid:(p:`$tx:trim x)except 1_key NS;
     '"Unrecognized params: ",","sv string invalid];
   -1 each tx,'"=",'string .params p;-1"";
   }
@@ -68,28 +69,29 @@ parse1Expression:{[x]
 parse1Function:{
   s:(1+i:y`loc)_x;
   sf:string f:y`func;
-  if[not(b~asc b)&2=count b:distinct s?"()";'"Opening and closing brackets not found for ",sf," in: ",s];
+  fv:.ta.u.fv f;
+  if[(::)~proj:.ta.proj y`func;proj:()];
+  if[not(b~asc b)&2=count b:distinct s?"()";'sf," is a reserved function in the .ta namespace. Either choose another variable name or call the function with round brackets"];
   if[";"in as:1_first b _s;'"qs arguments should be separated by , not ; (",as,")"];
   args:`$trim","vs as;
-  if[(en:.qs.fv f)<>an:count args;
-    'sf," expects ",string[en]," arguments, not ",string[an],": ",(1+s?")")#s];
-  if[not(::)~proj:.qs.fp y`func;args:proj,args];
+  if[fv<>an:count args;
+    'sf," expects ",string[fv]," arguments, not ",string[an],": ",(1+s?")")#s];
+  if[not(::)~proj:.ta.proj y`func;args:proj,args];
   frm:(1+b 1)#s;
-  to:".qs.fn.",sf,"[",sv[";";string args],"]";
+  to:".ta.",sf,"[",sv[";";string args],"]";
   (frm;to)
   }
 
+if[not count .z.x;-1"Usage q qs.q strategy_file";exit 1];
+STRAT:first .z.x
+if[not .qi.exists p:.qi.path .qi.ext["strategies/",STRAT;".qs"];-1@1_.qi.tostr[p]," not found";exit 1];
+
 / load params
-lparams:{.qi.loadcfg[`.params;`:strategies/params,x]}
+lparams:{[ns;x].qi.loadcfg[ns;` sv`:strategies/params,x]}NS:`$".params.",STRAT
 
 / ---- testing section  ---
 
 lparams`defaults.params
 lparams`mr.params
 
-{
-  if[not count .z.x;-1"Usage q qs.q strategy_file";exit 1];
-  if[not .qi.exists p:.qi.path .qi.ext["strategies/",first .z.x;".qs"];-1@1_.qi.tostr[p]," not found";exit 1];
-  .qs.l p;
- }[];
-
+.qs.l p;

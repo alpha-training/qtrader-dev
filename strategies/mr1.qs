@@ -18,7 +18,7 @@ indicators:
   mid     = sma(close, lookback)
   sigma   = stdev(close, lookback)
   zscore  = (close - mid) % sigma
-  atr     = atr(atr_lookback)
+  atr1     = atr(atr_lookback)
   vol_ok  = volume > sma(volume, vol_lookback) * min_volume_ratio
 
 enter:
@@ -29,10 +29,10 @@ signal_exit:
   zscore > -z_exit
 
 trailing_stop:
-  close < peak_close - atr * atr_mult
+  close < peak_close - atr1 * atr_mult
 
 stop_loss:
-  close < mid - atr * atr_mult
+  close < mid - atr1 * atr_mult
 
 time_stop:
   bars_in_trade > max_hold_bars

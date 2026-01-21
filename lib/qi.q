@@ -41,8 +41,7 @@ expand:{
   raze@[a;where a like"$*";{$[(::)~r:.conf`$1_x;"MISSING";tostr r]}]
  }
 
-loadcfg:{[ns;px]
-  if[not exists p:path px;:()];
+loadcfg:{[ns;p]
   s@:where(s:read0 p)like"[A-z]*";
   s@:where 1=sum each s="=";
   if[count err:select from(a:flip`k`v!("S*";"=")0:s)where 0=count each v;
