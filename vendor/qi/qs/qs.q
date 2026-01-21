@@ -11,11 +11,13 @@ F:system"f .ta"
 HEADERS:string`params`state`indicators`enter`signal_exit`stop_loss`take_profit`time_stop`trailing_stop`exit_policy`execution
 
 / entry function
-l:{[p]
-  s@:where 0<count each s:read0 p;
+l:{[strat]
+  lparams strat;
+  s@:where 0<count each s:read0 p:` sv `:strategies,.qi.ext[strat;".qs"];
   sections:where[s like"[A-z]*"]_s;
   if[count ih:sections[;0]except HEADERS,'":";'"invalid header(s): ",","sv ih];
-  processSection each sections; 
+  NS::` sv `.params,strat;
+  processSection each sections;
  }
 
 processSection:{[x]
@@ -24,9 +26,9 @@ processSection:{[x]
  }
 
 ps.params:{
-  if[count invalid:(p:`$tx:trim x)except 1_key NS;
+  if[count invalid:(p:`$tx:trim x)except 1_key params:get NS;
     '"Unrecognized params: ",","sv string invalid];
-  -1 each tx,'"=",'string .params p;-1"";
+  -1 each tx,'"=",'string params p;-1"";
   }
 
 ps.indicators:{-1 each parse1Definition each trim x;-1"";}
@@ -82,16 +84,24 @@ parse1Function:{
   (frm;to)
   }
 
-if[not count .z.x;-1"Usage q qs.q strategy_file";exit 1];
-STRAT:first .z.x
-if[not .qi.exists p:.qi.path .qi.ext["strategies/",STRAT;".qs"];-1@1_.qi.tostr[p]," not found";exit 1];
+{
+  if[ok:0<count .z.x;
+    if[ok:0<count s:.qi.opts`strats;
+      ok:0<count STRATS::`$","vs trim s]];
+  if[not ok;
+    -1"Usage q qs.q -strats [mr1,mr2...]";exit 1];
+  }[];
 
 / load params
-lparams:{[ns;x].qi.loadcfg[ns;` sv`:strategies/params,x]}NS:`$".params.",STRAT
+lparams:{[strat]
+  -1 "Loading params for ",.qi.tostr strat;
+  ns:` sv`.params,strat;
+  pd:`:strategies/params;
+  .qi.loadcfg[ns;` sv pd,`defaults.params];
+  if[.qi.exists f:.qi.path pd,.qi.ext[strat;".params"];
+    .qi.loadcfg[ns;f]];
+ }
 
 / ---- testing section  ---
 
-lparams`defaults.params
-lparams`mr.params
-
-.qs.l p;
+.qs.l each STRATS;

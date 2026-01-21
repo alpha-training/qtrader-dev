@@ -2,6 +2,14 @@
 
 \d .ta
 
+getParam:{[strat;param]
+  if[not null strat;
+    if[not(::)~sr:@[get;` sv `.params,strat,`ta,param;::];
+      :sr]];
+  if[(::)~r:.ta param;'".ta.",string[param]," is not defined"];
+  r
+  }
+
 sma:{[px;n] n mavg px}
 stdev:{[px;n] n mdev px}
 
