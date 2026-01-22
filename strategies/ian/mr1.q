@@ -37,7 +37,6 @@ ks:{[dates;syms]
     stratacc_return lj sharpe lj min_drawdown
   }
 
-
 / --- Constants ---
 z_exit:-1
 atr_mult:2.5
