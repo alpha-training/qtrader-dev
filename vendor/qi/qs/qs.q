@@ -15,53 +15,57 @@ l:{[strat]
   lparams strat;
   s@:where 0<count each s:read0 p:` sv `:strategies,.qi.ext[strat;".qs"];
   sections:where[s like"[A-z]*"]_s;
-  if[count ih:sections[;0]except HEADERS,'":";'"invalid header(s): ",","sv ih];
-  NS::` sv `.params,strat;
-  processSection each sections;
+  if[count ih:(headers:sections[;0])except HEADERS,'":";'"invalid header(s): ",","sv ih];
+  /NS::` sv `.params,strat;
+  processSection[strat]'[`$-1_'headers;1_'sections];
+  -1"";
+  -1 d:"q).strat.",string strat;
+  show get d;
  }
 
-processSection:{[x]
-  -1"--- ",(a:-1_first x), " ---";
-  ps[`$a]1_x;
+processSection:{[strat;header;body]
+  /-1"--- ",string[header], " ---";
+  sv[`;`.strat,strat,header]set r:ps[header][strat;body];
+  /$[type r;show;-1 each]r;
  }
 
-ps.params:{
-  if[count invalid:(p:`$tx:trim x)except 1_key params:get NS;
+ps.params:{[strat;x]
+  if[count invalid:(p:`$tx:trim x)except 1_key params:.params strat;
     '"Unrecognized params: ",","sv string invalid];
-  -1 each tx,'"=",'string params p;-1"";
+  p#params
   }
 
-ps.indicators:{-1 each parse1Definition each trim x;-1"";}
+ps.indicators:{[strat;x]parse1Definition[strat]each trim x}
 
-ps.enter:{-1 each parse1Expression each trim x;-1"";}
+ps.enter:{[strat;x]parse1Expression[strat]each trim x}
 ps.signal_exit:ps.enter
 ps.stop_loss:ps.enter
 ps.trailing_stop:ps.enter
 ps.take_profit:ps.enter
 ps.time_stop:ps.enter
-ps.state:{-1 each trim x;-1"";}
+ps.state:{[strat;x] trim x}
 ps.exit_policy:ps.state
 ps.execution:ps.state
 
 / e.g. v1 = stdev(close, lookback) - lookback*some_val
-parse1Definition:{
+parse1Definition:{[strat;x]
   if[not"="~x eq:not[x in .Q.an," "]?1b;'"Indicator definition should be of the form: variable = expression. Instead it is: ",x];
   k:trim eq#x;
-  v:parse1Expression trim(1+eq)_x;
+  v:parse1Expression[strat]trim(1+eq)_x;
   k,":",v
   }
 
 findWord:{x ss/:{a,x,a:"[^A-z,_,0-9]"}each y}
 
 / e.g. stdev(close, lookback) - lookback*some_val
-parse1Expression:{[x]
+parse1Expression:{[strat;x]
   if[count x ss"==";'"Use a single = to check for equality: ",x];
   s:a,x,a:"\001";
-  p:1_key .params;
+  p:1_key pd:.params strat;
   if[count pm:ungroup([]p;loc:1+findWord[s;string p]);
     pm:update n:count each string p from`loc xasc pm;
     a:pm[`loc]_s;
-    s:(first[pm`loc]#s),raze{.qi.tostr[.params y`p],y[`n]_x}'[a;pm]];
+    s:(first[pm`loc]#s),raze{[pd;x;y] .qi.tostr[pd y`p],y[`n]_x}[pd]'[a;pm]];
   s:ssr[s;"--";""];   / TODO - bit hacky
   m:ungroup([]func:F;loc:findWord[s;string F]);
   replaces:parse1Function[s]each m;
