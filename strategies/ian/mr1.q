@@ -5,7 +5,7 @@
 
 \l /data/alf/polygon/hdb/us_stocks_sip
 
-(2022.03.02 2022.03.10),sym in`AAPL`TSLA
+/(2022.03.02 2022.03.10),sym in`AAPL`TSLA
 
 lookback:50
 vol_lookback:20
@@ -33,7 +33,7 @@ ks:{[dates;syms]
     a8:update dd:(equity-((|\)equity))%((|\)equity)by sym from a7;
     stratacc_return:select -1#equity by sym from a8;
     sharpe:select sharpe:sqrt[98280]*avg[port_return]%dev[port_return]by sym from a8;
-    min_drawdown:select min dd by sym from a8;
+    min_drawdown:select max_dd:min dd by sym from a8;
     stratacc_return lj sharpe lj min_drawdown
   }
 
