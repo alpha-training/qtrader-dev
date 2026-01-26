@@ -78,6 +78,47 @@ backtest_logic:{[s;r]
  }
 
 
+.ta.inds:1!([]indicator:key[d]),'(uj/)enlist each d:`$'(.j.k raze read0`:stack.json)`indicators;
+t1:`ndep xasc update up:0b,ndep:count each depends_on from .ta.inds;
+update enlist[depends_on]from `t1 where 1=count each depends_on;
+
+
+order:();
+getOrder:{ / the only purpose of this function is to ensure the varibale order dictates the correct order for the indicators to be run
+  remaining:exec indicator from t1 where not up;
+  if[0=count remaining;:0b];
+  ready:except[exec indicator from t1 where 0=ndep;order];
+  order::order,ready;
+  if[count ready;
+    update up:1b from`t1 where indicator in ready;
+    update depends_on:depends_on except\:ready,ndep:count each depends_on except\:ready from`t1];
+    count ready
+ };
+getOrder/[1b];
+
+
+
+
+
+EHL:order
+
+pindictors:("mid:.ta.sma[close;40]";
+"sigma:.ta.stdev[close;40]";
+"zscore:(close - mid) % sigma";
+"atr1:.ta.atr[high;low;close;30]";
+"vol_ok:volume > .ta.sma[volume;20] * 2")
+
+
+u:parse pindictors;
+ol:EHL asc EHL?u[;1];
+newp:u u[;1]?ol;
+
+.iw.run{[strat;dates;syms;bars]
+  params:.params strat;
+  a1:select from bars where date within dates,time within .params `market_hours,sym in syms;
+  {![`tt;();enlist[`sym]!enlist`sym;enlist[x 1]!enlist x 2]} each newp; /to work off indictor by strat
+
+  };
 
 
 
