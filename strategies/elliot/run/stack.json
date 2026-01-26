@@ -1,0 +1,403 @@
+{
+  "description": "TA Indicators",
+  "indicators": {
+    "mid": {
+      "args": [
+        "close",
+        "lookback"
+      ]
+    },
+    "sigma": {
+      "args": [
+        "close",
+        "lookback"
+      ]
+    },
+    "zscore": {
+      "args": [
+        "close",
+        "mid",
+        "sigma"
+      ],
+      "depends_on": [
+        "mid",
+        "sigma"
+      ]
+    },
+    "atr1": {
+      "args": [
+        "close",
+        "mid",
+        "sigma"
+      ],
+      "depends_on": ["sigma"]
+    },
+    "vol_ok": {
+      "args": [
+        "volume",
+        "vol_lookback",
+        "min_volume_ratio"
+      ]
+    },
+    "sma": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "stdev": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "atr": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ]
+    },
+    "RSI": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "BBANDS": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n",
+        "k"
+      ]
+    },
+    "TAEMA": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "STOCHF": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n",
+        "m"
+      ]
+    },
+    "STOCH": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n",
+        "m"
+      ]
+    },
+    "MACD": {
+      "args": [
+        "close",
+        "fast",
+        "slow",
+        "period"
+      ]
+    },
+    "KAMA": {
+      "args": [
+        "close",
+        "n",
+        "fast",
+        "slow"
+      ]
+    },
+    "midpoint": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "midprice": {
+      "args": [
+        "high",
+        "low",
+        "n"
+      ]
+    },
+    "MFI": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "volume",
+        "n"
+      ]
+    },
+    "AROON": {
+      "args": [
+        "high",
+        "low",
+        "n"
+      ]
+    },
+    "AROONOSC": {
+      "args": [
+        "high",
+        "low",
+        "n"
+      ],
+      "depends_on": [
+        "AROON"
+      ]
+    },
+    "TRIMA": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "TEMA": {
+      "args": [
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "TAEMA"
+      ]
+    },
+    "TRANGE": {
+      "args": [
+        "high",
+        "low",
+        "close"
+      ]
+    },
+    "ATR": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "TRANGE"
+      ]
+    },
+    "NATR": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "TRANGE"
+      ]
+    },
+    "DEMA": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "PLUS_DM": {
+      "args": [
+        "high",
+        "low",
+        "n"
+      ]
+    },
+    "MINUS_DM": {
+      "args": [
+        "high",
+        "low",
+        "n"
+      ]
+    },
+    "PLUS_DI": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "PLUS_DM",
+        "TRANGE"
+      ]
+    },
+    "MINUS_DI": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "MINUS_DM",
+        "TRANGE"
+      ]
+    },
+    "DX": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "PLUS_DI",
+        "MINUS_DI"
+      ]
+    },
+    "ADX": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "DX"
+      ]
+    },
+    "ADXR": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ],
+      "depends_on": [
+        "ADX"
+      ]
+    },
+    "MOM": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "ROC": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "ROCP": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "ROCR": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "ROCR100": {
+      "args": [
+        "close",
+        "n"
+      ]
+    },
+    "AD": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "volume"
+      ]
+    },
+    "ADOSC": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "volume",
+        "fast",
+        "slow"
+      ],
+      "depends_on": [
+        "AD",
+        "TAEMA"
+      ]
+    },
+    "OBV": {
+      "args": [
+        "close",
+        "volume"
+      ]
+    },
+    "AVGPRICE": {
+      "args": [
+        "open",
+        "high",
+        "low",
+        "close"
+      ]
+    },
+    "MEDPRICE": {
+      "args": [
+        "high",
+        "low"
+      ]
+    },
+    "TYPPRICE": {
+      "args": [
+        "high",
+        "low",
+        "close"
+      ]
+    },
+    "WCLPRICE": {
+      "args": [
+        "high",
+        "low",
+        "close"
+      ]
+    },
+    "PPO": {
+      "args": [
+        "close",
+        "fast",
+        "slow"
+      ]
+    },
+    "APO": {
+      "args": [
+        "close",
+        "fast",
+        "slow"
+      ]
+    },
+    "BOP": {
+      "args": [
+        "open",
+        "high",
+        "low",
+        "close"
+      ]
+    },
+    "CCI": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ]
+    },
+    "WILLR": {
+      "args": [
+        "high",
+        "low",
+        "close",
+        "n"
+      ]
+    }
+  }
+}
