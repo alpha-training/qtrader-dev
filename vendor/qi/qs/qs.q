@@ -10,6 +10,13 @@ F:system"f .ta"
 /MF:(F,\:"("),F,\:" ("
 HEADERS:string`params`state`indicators`enter`signal_exit`stop_loss`take_profit`time_stop`trailing_stop`exit_policy`execution
 
+/ returns a boolean of where y (at any level of depth) exists in x
+find:{$[(t:type x)in 0 99h;raze .z.s[;y]each x;11=abs t;except[(),y?x;count y];()]}
+toagg:{last -5!"select ",sv[",";x]," from t"}
+dparse:{$[type x;-5!x;.z.s each x]}each   / parse at depth
+byds:{x!x}`date`sym
+byg:{x!x}1#`G
+
 / entry function
 l:{[strat]
   lparams strat;
@@ -18,8 +25,7 @@ l:{[strat]
   if[count ih:(headers:sections[;0])except HEADERS,'":";'"invalid header(s): ",","sv ih];
   /NS::` sv `.params,strat;
   processSection[strat]'[`$-1_'headers;1_'sections];
-  -1"";
-  -1 d:"q).strat.",string strat;
+  -1"";-1 d:"q).strat.",string strat;
   show get d;
  }
 
@@ -109,3 +115,23 @@ lparams:{[strat]
 / ---- testing section  ---
 
 .qs.l each STRATS;
+
+run:{[t;d;s;strat]
+  sd:.strat strat;
+  fdate:$[2=count d;within;in];
+  a:select from t where fdate[date;d],sym in s;
+  a:update`g#G from a lj 2!update G:i from distinct select date,sym from a;
+  a:update I:-1+sums i=i by G from a;
+  a:update `g#I from a;
+  d:toagg sd`indicators;
+  od:group iasc[od]#od:find[;key d]each d;
+  a:{![y;();byg;z#x]}[d]/[a;od];
+  a:delete date,transactions from{![y;dparse x z;byg;(1#z)!1#1b]}[sd]/[a;key[sd]inter`enter`signal_exit];
+  a
+  }
+
+\d .
+
+/ 
+\l /Users/kieran/data/massive/hdb/us_stocks_sip
+r:.qs.run[`bar1m;2025.09.19;`AAPL`JPM;`mr1]
