@@ -1,0 +1,12 @@
+tag,header,subheaders
+strategy,params,
+strategy,indicators,
+strategy,enter,
+strategy,exits,signal_exit|time_stop|stop_loss|pnl_stop|pnl_trailing|take_profit
+strategy,exit_policy,
+execution,defaults,
+execution,pnl_stop,
+execution,stop_loss,
+execution,pnl_trailing,
+execution,take_profit,
+execution,signal_exit,

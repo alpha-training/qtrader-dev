@@ -1,8 +1,16 @@
 lookback=50
 vol_lookback=20
 max_hold_bars=60
-z_enter=1
+z_enter=.3
 z_exit=-1
 min_volume_ratio=2f
 atr_mult=2.5
 atr_lookback=30
+trail_activation_pct=0.05
+trail_atr_mult=2.0
+tp_r_mult=1
+max_loss_r=1
+trail_activate_r=1
+trail_giveback_r=1
+short_enter_z=1
+short_exit_z=1
