@@ -136,3 +136,32 @@ processStrat each 1_key .strat;
 {if[count data:getenv`QSDATA;
   system"l ",data;
   r::.qs.run[`bar1m;last date;`AAPL`JPM;`mr1]]}[]
+
+/
+
+STRATEGY IMPLEMENTATION SPECIFICATIONS - EXECUTION & PNL DERIVATION
+
+STATIC ANCHOR FIELDS Captured once at the bar of entry (t_entry) and persisted as constants for the life of the position.
+- entry_px: The execution price derived from exec_profiles.csv (adjusted for spread_factor and impact_bps).
+- initial_stop_px: The evaluated result of the formula (mid - (atr1 * atr_mult)) at t_entry.
+- r1 (1R): The absolute distance between entry and the initial stop. Formula: abs(entry_px - initial_stop_px). Note: This serves as the denominator for all relative PnL triggers (PnL-to-Risk).
+
+FLOATING PNL FIELDS Calculated at every bar (t >= t_entry) to evaluate exit conditions.
+- upnl: Unrealized PnL per unit. Formula: (current_price - entry_px) * side.
+- upnl_r: Unrealized PnL normalized to Risk units. Formula: upnl / r1.
+- mfe_r: Maximum Favorable Excursion in R-units. Logic: maxs(upnl_r) - the running maximum of upnl_r since entry.
+- giveback_r: The current retracement from the trade peak in R-units. Formula: mfe_r - upnl_r.
+
+EXECUTION PROFILE RESOLUTION Rules for mapping DSL urgency values to the urgency.csv parameters.
+- Label Mapping: If urgency is a string (e.g., "aggressive"), perform a direct lookup in urgency.csv.
+- Linear Interpolation: If urgency is a float (e.g., 0.4), linearly interpolate values for spread_factor and impact_bps using the nearest bounding keys in the CSV.
+- Integer Rounding: Round offset_bars to the nearest integer.
+Friction Summation: Total transaction friction = base_slippage (from DSL) + impact_bps (from CSV).
+
+EXIT TRIGGER EVALUATION (FIRST_HIT MODE) At each bar, evaluate all boolean conditions and exit on the first true result.
+- signal_exit: zscore > -z_exit
+- stop_loss (Dynamic): close < (mid - (atr1 * atr_mult)) -- Re-calculate formula at every bar.
+- pnl_stop: (-upnl_r) >= max_loss_r
+- pnl_trailing: (mfe_r >= trail_activate_r) AND (giveback_r >= trail_giveback_r)
+- take_profit: upnl_r >= tp_r_mult
+- time_stop: (current_bar_index - entry_bar_index) > max_hold_bars
