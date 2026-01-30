@@ -133,7 +133,6 @@ processStrat each 1_key .strat;
 
 \d .
 
-/
-
-\l /Users/kieran/data/massive/hdb/us_stocks_sip
-r:.qs.run[`bar1m;2025.09.19;`AAPL`JPM;`mr1]
+{if[count data:getenv`QSDATA;
+  system"l ",data;
+  r::.qs.run[`bar1m;last date;`AAPL`JPM;`mr1]]}[]
