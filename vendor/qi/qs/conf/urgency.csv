@@ -1,4 +1,0 @@
-urgency,label,spread_factor,offset_bars
-0.0,passive,-0.4,1,Post at Near
-0.5,mid,0.0,1,Mid-point cross
-1.0,aggressive,0.5,0,Take the Far

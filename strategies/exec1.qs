@@ -5,6 +5,7 @@
 defaults:
   urgency: passive
   tif: day
+  slippage: 1bp
 
 entry:
   urgency: mid

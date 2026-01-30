@@ -133,5 +133,7 @@ processStrat each 1_key .strat;
 
 \d .
 
+/
+
 \l /Users/kieran/data/massive/hdb/us_stocks_sip
 r:.qs.run[`bar1m;2025.09.19;`AAPL`JPM;`mr1]
