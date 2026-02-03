@@ -17,6 +17,22 @@
       },
       "depends_on" : ["tp0"]
     },
+    "massive": {
+      "proc": "massive",
+      "port_offset": 13,
+      "subscribe": {
+        "ctp": []
+      },
+      "depends_on" : ["tp0"]
+    },
+    "binance": {
+      "proc": "binance",
+      "port_offset": 14,
+      "subscribe": {
+        "ctp": []
+      },
+      "depends_on" : ["tp0"]
+    },
     "wdb": {
       "proc": "wdb",
       "port_offset": 12,
